@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Smogon Android</string>
+    <string name="tab1">stats</string>
+    <string name="tab2">overview</string>
+    <string name="tab3">articles</string>
+    <string name="sample">sample text</string>
+    <string name="gen1">RBY</string>
+    <string name="gen2">GSC</string>
+    <string name="gen3">RSE</string>
+    <string name="gen4">DPP</string>
+    <string name="gen5">BWB2W2</string>
+    <string name="gen6">XY</string>
+    <string name="gen7">SMUSUM</string>
+</resources>
