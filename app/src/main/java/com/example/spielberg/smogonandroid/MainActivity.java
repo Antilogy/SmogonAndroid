@@ -1,14 +1,21 @@
 package com.example.spielberg.smogonandroid;
 
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -18,12 +25,17 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
     URL url;
     HttpURLConnection urlConnection ;
     ServerSmogon smogon;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,33 +59,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void updatesmogon(int x){
+
         Thread thread;
         TextView stats,overview, article;
         setContentView(R.layout.pokearticle);
-        TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
-        tabHost.setup();
-        TabSpec tab1 = tabHost.newTabSpec("tag1");
-        TabSpec tab2 = tabHost.newTabSpec("tag2");
-        TabSpec tab3 = tabHost.newTabSpec("tag3");
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
-        tab1.setIndicator("stats");
-        tab1.setContent(R.id.stats);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
 
 //        stats = (TextView) findViewById(R.id.editText2);
 //        stats.setText("stat1");
         //tab1.setContent(new Intent(this,TabActivity1.class));
 
-        tab2.setIndicator("overview");
-        tab2.setContent(R.id.overview);
+
         //tab2.setContent(new Intent(this, TabActivity2.class));
 
-        tab3.setIndicator("articles");
-        tab3.setContent(R.id.articles);
+
         //tab3.setContent(new Intent(this, TabActivity3.class));
 
-        tabHost.addTab(tab1);
-        tabHost.addTab(tab2);
-        tabHost.addTab(tab3);
         switch (x){
             case 6:
 
@@ -90,5 +99,41 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+    private void setupViewPager(ViewPager viewpager){
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new TabActivity1(), "ONE");
+        adapter.addFragment(new TabActivity2(), "TWO");
+        adapter.addFragment(new TabActivity3(), "THREE");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }
