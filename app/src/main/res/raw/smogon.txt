@@ -1,2 +1,7 @@
+www.smogon.com/dex/rb/pokemon/
+www.smogon.com/dex/gs/pokemon/
+www.smogon.com/dex/rs/pokemon/
+www.smogon.com/dex/dp/pokemon/
+www.smogon.com/dex/bw/pokemon/
 www.smogon.com/dex/xy/pokemon/
 www.smogon.com/dex/sm/pokemon/

@@ -1,6 +1,9 @@
 package com.example.spielberg.smogonandroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,9 +12,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
@@ -19,6 +27,7 @@ import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,25 +41,59 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity {
     URL url;
     HttpURLConnection urlConnection ;
-    ServerSmogon smogon;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private final String gen1="rb",gen2="gs",gen3="rs",gen4="dp",gen5="bw",gen6="xy",gen7="sm";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final Button buttonrb = (Button) findViewById(R.id.redandblue);
+        buttonrb.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setuppokedex(gen1);
+            }
+        });
+
+
+        final Button buttongs = (Button) findViewById(R.id.goldandsilver);
+        buttongs.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setuppokedex(gen2);
+            }
+        });
+        final Button buttonrs = (Button) findViewById(R.id.rubyandsapphire);
+        buttonrs.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setuppokedex(gen3);
+            }
+        });
+
+        final Button buttondp = (Button) findViewById(R.id.diamondandpearl);
+        buttondp.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setuppokedex(gen4);
+            }
+        });
+        final Button buttonbw = (Button) findViewById(R.id.blackandwhite);
+        buttonbw.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setuppokedex(gen5);
+            }
+        });
+
         final Button buttonxy = (Button) findViewById(R.id.xandy);
         buttonxy.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                updatesmogon(6);
+                setuppokedex(gen6);
             }
         });
         final Button buttonsunandmoon = (Button) findViewById(R.id.sunandmoon);
         buttonsunandmoon.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                updatesmogon(7);
+                setuppokedex(gen7);
             }
         });
 
@@ -58,53 +101,48 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    public void updatesmogon(int x){
-
-        Thread thread;
-        TextView stats,overview, article;
-        setContentView(R.layout.pokearticle);
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
 
 
-//        stats = (TextView) findViewById(R.id.editText2);
-//        stats.setText("stat1");
-        //tab1.setContent(new Intent(this,TabActivity1.class));
+
+    private void setuppokedex(String gen){
+        Intent intent = new Intent(MainActivity.this, pokedex.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("gen", gen);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 
 
-        //tab2.setContent(new Intent(this, TabActivity2.class));
 
+    private void setupPopWindow(){
+        ConstraintLayout mainLayout = (ConstraintLayout) findViewById(R.id.activity_main_layout);
 
-        //tab3.setContent(new Intent(this, TabActivity3.class));
+        //inflate the layout of the popupwindow
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_checkarticles, null);
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
-        switch (x){
-            case 6:
+        // show the popup window
+        popupWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
 
-                smogon = new ServerSmogon(this.getBaseContext(), "xy");
-                thread = new Thread(smogon);
-                thread.start();
-                break;
-            case 7:
-                smogon = new ServerSmogon(this.getBaseContext(), "sm");
-                thread = new Thread(smogon);
-                thread.start();
-                break;
-            default:
-                break;
-        }
-
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
     private void setupViewPager(ViewPager viewpager){
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new TabActivity1(), "ONE");
-        adapter.addFragment(new TabActivity2(), "TWO");
-        adapter.addFragment(new TabActivity3(), "THREE");
+        adapter.addFragment(new TabActivity1(), "Stats");
+        adapter.addFragment(new TabActivity2(), "Overview");
+        adapter.addFragment(new TabActivity3(), "Articles");
         viewPager.setAdapter(adapter);
     }
 
