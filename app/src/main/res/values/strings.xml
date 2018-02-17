@@ -15,4 +15,7 @@
     <string name="welcome">Select your Gen</string>
     <string name="Warning">Warning! \nArticle directory for this gen has not been created. Would you like to download articles from Smogon?</string>
     <string name="search">Search Pokemon</string>
+    <string name="stats">HP \u007C ATK \u007C DEF \u007C SPA \u007C SPD \u007C SPE</string>
+    <string name="type">Type1 \u002F Type2</string>
+    <string name="number">\u0023</string>
 </resources>

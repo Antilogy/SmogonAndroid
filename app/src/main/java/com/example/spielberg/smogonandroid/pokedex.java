@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -31,6 +36,7 @@ import java.util.Scanner;
 
 public class pokedex extends AppCompatActivity {
     ServerSmogon sm;
+    String generation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +49,8 @@ public class pokedex extends AppCompatActivity {
     }
 
     private void populate_pokedex(String gen) {
-        JSONArray pokemon;
+        JSONArray pokemon, sortedpoke;
+        generation = gen;
         //download pokemon info on first bootup
         //check if directory is created and has files
         setupDirectory(gen);
@@ -55,8 +62,9 @@ public class pokedex extends AppCompatActivity {
             if(scan.hasNext()){
                 JSONObject obj = new JSONObject(scan.nextLine());
                 pokemon = obj.getJSONArray("pokemon");
-                //System.out.println(pokemon.length());
                 addpokemon(pokemon);
+
+
 
             }
         } catch (FileNotFoundException | JSONException e) {
@@ -65,6 +73,7 @@ public class pokedex extends AppCompatActivity {
 
 
     }
+
 
     private void addpokemon(JSONArray pokemon) {
         TableLayout table = (TableLayout) findViewById(R.id.pokemon_results);
@@ -79,44 +88,12 @@ public class pokedex extends AppCompatActivity {
         row.setLayoutParams(new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
 
-        //add pic column
-        tx = new TextView(this);
-        tx.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        addView(row,getText(R.string.number));//add index
+        addView(row,"pic");//add pic column
+        addView(row,"Name");//add name column
+        addView(row,getText(R.string.type));//add type column
+        addView(row,getText(R.string.stats));//add stats column
 
-        tx.setText("pic");
-
-        tx.setId(View.generateViewId());
-
-        tx.setTextColor(Color.WHITE);
-        tx.setPadding(5,5,5,5);
-        row.addView(tx);
-
-        //add name column
-        tx = new TextView(this);
-        tx.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        tx.setText("Name");
-
-        tx.setId(View.generateViewId());
-        tx.setTextColor(Color.WHITE);
-        tx.setPadding(5,5,5,5);
-
-        row.addView(tx);
-
-        //add stats column
-        tx = new TextView(this);
-        tx.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        tx.setText("Stats");
-
-        tx.setId(View.generateViewId());
-        tx.setTextColor(Color.WHITE);
-        tx.setPadding(5,5,5,5);
-
-        row.addView(tx);
         row.setPadding(5,5,5,5);
 
         //add row
@@ -135,24 +112,36 @@ public class pokedex extends AppCompatActivity {
             profile.setPadding(5,5,5,5);
             profile.setImageResource(R.mipmap.ic_launcher);
 
-            tx = new TextView(this);
-            tx.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+            addView(row, Integer.toString(i+1));
+            row.addView(profile);
+
             try{
-                tx.setText(pokemon.getJSONObject(i).getString("name"));
-                System.out.println(pokemon.getJSONObject(i).getString("name"));
+                addView(row,  pokemon.getJSONObject(i).getString("name"));
+
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            params = (TableRow.LayoutParams)tx.getLayoutParams();
-            params.span = 2;
-            tx.setId(View.generateViewId());
-            tx.setLayoutParams(params);
-            tx.setTextColor(Color.WHITE);
-            tx.setPadding(5,5,5,5);
-            row.addView(profile);
-            row.addView(tx);
             row.setPadding(5,5,5,5);
+
+            //setup for onclick view
+            row.setOnClickListener(new View.OnClickListener(){
+                //TableRow is calling onClick()
+                public void onClick(View v){
+                    TableRow littlerow = (TableRow) v;
+                    TextView text = (TextView) littlerow.getChildAt(2);
+                    TextView number = (TextView) littlerow.getChildAt(0);
+                    //Get original index for pokedex
+                    int index = Integer.parseInt(number.getText().toString()) - 1;
+                    Intent intent = new Intent(pokedex.this, pokearticle.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("index", index);
+                    bundle.putString("gen", generation);
+                    Log.i("tablerow",number.getText().toString()+
+                            text.getText().toString());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            });
 
             table.addView(row);
 
@@ -161,7 +150,32 @@ public class pokedex extends AppCompatActivity {
 
     }
 
-    /*setup directory for specified game version
+
+    /**
+     * generic addview function for tablerow.
+     * Adds a textview with name to a tablerow.
+     */
+    private void addView(TableRow row, CharSequence name){
+        TextView tx;
+        //add pic column
+        tx = new TextView(this);
+        tx.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        TableRow.LayoutParams params = (TableRow.LayoutParams)tx.getLayoutParams();
+        params.gravity = Gravity.CENTER_VERTICAL;
+        tx.setLayoutParams(params);
+        tx.setText(name);
+
+        tx.setId(View.generateViewId());
+
+        tx.setTextColor(Color.WHITE);
+        tx.setPadding(5,5,5,5);
+        row.addView(tx);
+    }
+
+    /**
+     * setup directory for specified game version
     **/
     private void setupDirectory(String gamever){
         File folder = new File(getFilesDir() +

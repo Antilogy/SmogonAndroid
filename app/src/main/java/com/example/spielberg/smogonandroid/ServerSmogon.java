@@ -3,6 +3,7 @@ package com.example.spielberg.smogonandroid;
 import android.content.Context;
 import android.os.Environment;
 import android.os.Process;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +16,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 /**
  * Created by Spielberg on 7/6/2017.
@@ -52,9 +60,9 @@ public class ServerSmogon implements Runnable {
     }
 
     public void downloadStats(){
-        JSONArray jsonArray;
+        JSONArray jsonArray, sortedpoke;
         int n;
-
+        Collection<String> pokedexlist = new TreeSet<String>(Collator.getInstance());
         InputStream is = context.getResources().openRawResource(R.raw.smogon);
         Scanner scan = new Scanner(is).useDelimiter("\n");
         while(scan.hasNext() ){
@@ -75,17 +83,22 @@ public class ServerSmogon implements Runnable {
                     if(!joke.contains("dexSettings")){
                         continue;
                     }
-                    System.out.println("Success "+gamever);
+                    //System.out.println("Success "+gamever);
 
                     String string = joke.substring(26, joke.length());
 
                     JSONObject obj = new JSONObject(string);
                     obj = obj.getJSONArray("injectRpcs").getJSONArray(1)
                             .getJSONObject(1);
+
+                    //sort the pokemon array first
+                    sortedpoke = sortJSONArray(obj.getJSONArray("pokemon"));
+                    obj.put("pokemon",sortedpoke);
+                    //end of sorting pokemon
                     File f = new File(context.getFilesDir() +
                             "/pokedex/"+ gamever+".txt");
                     FileOutputStream stream = new FileOutputStream(f);
-                    //should save 7 objects from JSONObject
+                    //should save 7 objects from JSONObject obj
                     try{
                         stream.write(obj.toString().getBytes());
                     } finally{
@@ -114,6 +127,39 @@ public class ServerSmogon implements Runnable {
 
         }
     }
+
+    private JSONArray sortJSONArray(JSONArray pokemon) {
+        List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+        for (int i = 0; i < pokemon.length(); i++) {
+            try {
+                jsonValues.add(pokemon.getJSONObject(i));
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+
+        Collections.sort( jsonValues, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA = new String();
+                String valB = new String();
+
+                try {
+                    valA = (String) a.get("name");
+                    valB = (String) b.get("name");
+                }
+                catch (JSONException e) {
+                    Log.e("comparator for pokelist",
+                            "JSONException in combineJSONArrays sort section", e);
+                }
+
+                return valA.compareTo(valB);
+            }
+        });
+        return new JSONArray(jsonValues);
+    }
+
     public void downloadArticles(){
         JSONArray jsonArray;
         int n;

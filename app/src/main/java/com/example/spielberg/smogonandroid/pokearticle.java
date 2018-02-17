@@ -1,6 +1,7 @@
 package com.example.spielberg.smogonandroid;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
@@ -34,68 +35,28 @@ public class pokearticle extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.pokemon = savedInstanceState.getString("pokemon").toLowerCase();
-        this.gen = savedInstanceState.getString("gen");
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        this.gen = bundle.getString("gen");
         setContentView(R.layout.pokearticle);
-
-        final Button buttonrb = (Button) findViewById(R.id.redandblue);
-        buttonrb.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(1);
-            }
-        });
+        callSmogon(bundle.getInt("index"));
 
 
-        final Button buttongs = (Button) findViewById(R.id.goldandsilver);
-        buttongs.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(2);
-            }
-        });
-        final Button buttonrs = (Button) findViewById(R.id.rubyandsapphire);
-        buttonrs.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(3);
-            }
-        });
 
-        final Button buttondp = (Button) findViewById(R.id.diamondandpearl);
-        buttondp.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(4);
-            }
-        });
-        final Button buttonbw = (Button) findViewById(R.id.blackandwhite);
-        buttonbw.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(5);
-            }
-        });
 
-        final Button buttonxy = (Button) findViewById(R.id.xandy);
-        buttonxy.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(6);
-            }
-        });
-        final Button buttonsunandmoon = (Button) findViewById(R.id.sunandmoon);
-        buttonsunandmoon.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                updatesmogon(7);
-            }
-        });
 
 
 
 
     }
 
-    public void updatesmogon(int x){
+    public void callSmogon(int x){
+
         TabLayout tablayout2;
         Thread thread;
         TextView stats,overview, article;
         Boolean directory;
-        setContentView(R.layout.pokearticle);
+
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
@@ -112,7 +73,7 @@ public class pokearticle extends AppCompatActivity {
 
 
 
-        switch (x){
+       /* switch (x){
             case 1:
                 smogon = new ServerSmogon(this.getBaseContext(), "rb", "articles", pokemon);
                 //check if directory for articles is created
@@ -255,7 +216,7 @@ public class pokearticle extends AppCompatActivity {
                 break;
             default:
                 break;
-        }
+        }*/
 
     }
 
@@ -296,7 +257,7 @@ public class pokearticle extends AppCompatActivity {
         }
     }
 
-    /*setup directory for specified game version
+    /**setup directory for specified game version
     * Returns true if directory already exists
     * Returns false if directory needs to be created*/
     private boolean setupDirectory(String gamever){
