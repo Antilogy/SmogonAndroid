@@ -41,7 +41,7 @@ public class ServerSmogon implements Runnable {
         this.context = context;
         this.gamever = gen;
         this.job = job;
-        this.pokemon = pokemon;
+        this.pokemon = pokemon.toLowerCase();
     }
     @Override
     public void run(){
@@ -62,21 +62,15 @@ public class ServerSmogon implements Runnable {
     public void downloadStats(){
         JSONArray jsonArray, sortedpoke;
         int n;
-        Collection<String> pokedexlist = new TreeSet<String>(Collator.getInstance());
-        InputStream is = context.getResources().openRawResource(R.raw.smogon);
-        Scanner scan = new Scanner(is).useDelimiter("\n");
-        while(scan.hasNext() ){
+
             try {
 
-                url = new URL("http://"+scan.nextLine());
-                if(!url.toString().contains("/"+gamever+"/")){
-                    continue;
-                }
+                url = new URL("https://www.smogon.com/dex/"+gamever+"/pokemon/");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
-                System.out.println(urlConnection.getErrorStream());
+
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                System.out.println(in.toString());
+
                 Scanner sc = new Scanner(in, "UTF-8").useDelimiter("\n");
                 while(sc.hasNext()){
                     String joke = sc.nextLine();
@@ -101,31 +95,28 @@ public class ServerSmogon implements Runnable {
                     //should save 7 objects from JSONObject obj
                     try{
                         stream.write(obj.toString().getBytes());
-                    } finally{
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    }finally{
                         stream.close();
                     }
 
                     n = obj.length();
                     System.out.println(n);
-
+                    break;
                 }
 
             } catch (IOException | JSONException  e) {
                 e.printStackTrace();
             } catch (Exception e){
                 e.printStackTrace();
-            }
-                finally
-            {
+            } finally {
                 if(urlConnection != null){
                     urlConnection.disconnect();
                 }
-                if(url.toString().contains("/"+gamever+"/")){
-                    break;
-                }
             }
 
-        }
+
     }
 
     private JSONArray sortJSONArray(JSONArray pokemon) {
@@ -164,48 +155,58 @@ public class ServerSmogon implements Runnable {
         JSONArray jsonArray;
         int n;
 
-        InputStream is = context.getResources().openRawResource(R.raw.smogon);
-        Scanner scan = new Scanner(is).useDelimiter("\n");
-        while(scan.hasNext() ){
-            try {
 
-                url = new URL("http://"+scan.nextLine().concat("abomasnow/"));
-                if(!url.toString().contains("/"+gamever+"/")){
+
+
+        try {
+
+            url = new URL("https://www.smogon.com/dex/"+gamever+"/pokemon/"+
+            pokemon+"/");
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            Scanner sc = new Scanner(in, "UTF-8").useDelimiter("\n");
+            while(sc.hasNext()){
+                String joke = sc.nextLine();
+                if(!joke.contains("dexSettings")){
                     continue;
                 }
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                Scanner sc = new Scanner(in, "UTF-8").useDelimiter("\n");
-                while(sc.hasNext()){
-                    String joke = sc.nextLine();
-                    if(!joke.contains("dexSettings")){
-                        continue;
-                    }
-                    System.out.println("Success "+gamever);
+                Log.i("Success: ",pokemon);
 
-                    String string = joke.substring(26, joke.length());
+                String string = joke.substring(26, joke.length());
 
-                    JSONObject obj = new JSONObject(string);
-                    jsonArray = obj.getJSONArray("injectRpcs").getJSONArray(2)
-                            .getJSONObject(1).getJSONArray("strategies");
-                    n = jsonArray.length();
-                    System.out.println(n);
+                JSONObject obj = new JSONObject(string);
+                jsonArray = obj.getJSONArray("injectRpcs").getJSONArray(2)
+                        .getJSONObject(1).getJSONArray("strategies");
+                File f= new File(context.getFilesDir() + "/strategy_" + gamever+
+                "/" + pokemon.toLowerCase() + ".txt");
 
+                FileOutputStream stream = new FileOutputStream(f);
+                try{
+                    stream.write(jsonArray.toString().getBytes());
+                } catch(IOException e){
+                    e.printStackTrace();
+                } finally{
+                    stream.close();
                 }
 
-            } catch (IOException | JSONException  e ) {
-                e.printStackTrace();
-            } finally{
-                if(urlConnection != null){
-                    urlConnection.disconnect();
-                }
-                if(url.toString().contains("/"+gamever+"/")){
-                    break;
-                }
+                n = jsonArray.length();
+                Log.i("ServerSmogon ", Integer.toString(n));
+
+            }
+
+        } catch (IOException | JSONException  e ) {
+            e.printStackTrace();
+        } finally{
+            if(urlConnection != null){
+                urlConnection.disconnect();
             }
 
         }
+
+
+
 
     }
 }

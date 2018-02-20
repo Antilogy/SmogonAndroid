@@ -49,7 +49,7 @@ public class pokedex extends AppCompatActivity {
     }
 
     private void populate_pokedex(String gen) {
-        JSONArray pokemon, sortedpoke;
+        JSONArray pokemon;
         generation = gen;
         //download pokemon info on first bootup
         //check if directory is created and has files
@@ -189,18 +189,17 @@ public class pokedex extends AppCompatActivity {
             return;
         }
         //if not make it
-        else{
-            folder.mkdirs();
-            try{
-                f.createNewFile();
-            } catch(IOException e){
-                e.printStackTrace();
-            }
 
+        folder.mkdirs();
+        try{
+            f.createNewFile();
+        } catch(IOException e){
+            e.printStackTrace();
         }
+
+
         //download stats
         Resources resource = getBaseContext().getResources();
-        System.out.println(resource.toString());
         sm = new ServerSmogon(getBaseContext(), gamever, "stats", "none");
         thread = new Thread(sm);
 

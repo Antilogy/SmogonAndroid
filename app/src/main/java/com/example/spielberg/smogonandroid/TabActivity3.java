@@ -1,16 +1,29 @@
 package com.example.spielberg.smogonandroid;
 
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Spielberg on 7/25/2017.
  */
 
 public class TabActivity3 extends Fragment {
+    JSONArray strategy;
+    LinearLayout list;
     public TabActivity3() {
         // Required empty public constructor
     }
@@ -18,12 +31,87 @@ public class TabActivity3 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try{
+            Bundle bundle = getArguments();
+            strategy = new JSONArray(bundle.getString("movesets"));
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.articles, container, false);
+        View v = inflater.inflate(R.layout.articles, container, false);
+        this.list = (LinearLayout)v.findViewById(R.id.list_articles);
+        setupArticles();
+        return v;
+    }
+
+    private void setupArticles() {
+        String info;
+        JSONObject obj;
+        list.removeAllViews();
+        if(strategy.length()>0){
+            for(int i=0;i<strategy.length();i++){
+                try{
+                    obj = strategy.getJSONObject(i);
+                    info = obj.getString("name");
+                    info = info.concat("\n" + obj.getString("description"));
+                    addView(list, Html.fromHtml(info));
+                } catch(JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    private void addView(LinearLayout list, CharSequence name){
+        TextView tx;
+        //add pic column
+        tx = new TextView(getActivity());
+        tx.setLayoutParams(new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)tx.getLayoutParams();
+        params.gravity = Gravity.CENTER_VERTICAL;
+        //params.setMargins(0,1,0,1);
+        tx.setLayoutParams(params);
+        tx.setText(name);
+
+        tx.setId(View.generateViewId());
+
+        tx.setTextColor(Color.WHITE);
+        tx.setPadding(20,20,20,20);
+        tx.setMaxLines(4);
+        tx.setEllipsize(TextUtils.TruncateAt.END);
+        //if the textview has text give it a border
+        tx.setBackground(getResources().getDrawable(R.drawable.border));
+
+        list.addView(tx);
+    }
+    public static TabActivity3 newInstance(String text){
+        TabActivity3 tab = new TabActivity3();
+        Bundle args = new Bundle();
+        args.putString("movesets", text);
+
+        tab.setArguments(args);
+        return tab;
+    }
+
+    public void newMoveset(String text){
+        try{
+            strategy = new JSONArray(text);
+            if(list!=null){
+                setupArticles();
+            }
+
+
+        } catch(JSONException e){
+            e.printStackTrace();
+        }
+
     }
 }
