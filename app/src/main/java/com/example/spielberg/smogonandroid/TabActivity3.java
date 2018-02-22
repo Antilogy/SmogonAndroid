@@ -1,5 +1,6 @@
 package com.example.spielberg.smogonandroid;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 /**
  * Created by Spielberg on 7/25/2017.
@@ -90,6 +92,24 @@ public class TabActivity3 extends Fragment {
         //if the textview has text give it a border
         tx.setBackground(getResources().getDrawable(R.drawable.border));
 
+        //setup onclickviewlistener
+        tx.setOnClickListener(new View.OnClickListener(){
+            //textview is calling onClick
+            public void onClick(View v){
+                TextView textview = (TextView) v;
+                int index = ((LinearLayout) textview.getParent()).indexOfChild(textview);
+                Intent intent = new Intent(getActivity(), readArticle.class);
+                Bundle bundle = new Bundle();
+
+                bundle.putString("article", strategy.toString());
+                bundle.putInt("index", index);
+
+                intent.putExtras(bundle);
+                startActivity(intent);
+
+
+            }
+        });
         list.addView(tx);
     }
     public static TabActivity3 newInstance(String text){

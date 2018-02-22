@@ -18,4 +18,7 @@
     <string name="stats">HP \u007C ATK \u007C DEF \u007C SPA \u007C SPD \u007C SPE</string>
     <string name="type">Type1 \u002F Type2</string>
     <string name="number">\u0023</string>
+    <string name="update">update</string>
+    <string name="backward"> \u002F </string>
+    <string name="colon">\u003A</string>
 </resources>

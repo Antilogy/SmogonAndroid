@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black">
+
+            <Button
+                android:layout_alignParentEnd="true"
+                android:id="@+id/update_button"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/update" />
+
+            <TextView
+                android:layout_alignParentStart="true"
+                android:id="@+id/article_real"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/update_button"
+                android:text="@string/sample"
+                android:textColor="@color/white"
+                android:background="@color/black"
+                android:textSize="18sp"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

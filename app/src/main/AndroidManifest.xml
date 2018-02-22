@@ -20,7 +20,8 @@
         <activity android:name=".pokedex">
         </activity>
         <activity android:name=".pokearticle">
-
+        </activity>
+        <activity android:name=".readArticle">
         </activity>
     </application>
 
