@@ -19,7 +19,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="22dp"
             android:text="@string/sample"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            android:textSize="18sp"/>
     </ScrollView>
 
 </android.support.constraint.ConstraintLayout>
