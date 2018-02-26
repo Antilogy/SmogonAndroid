@@ -49,9 +49,7 @@ public class ReadTab extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.read_tab, container, false);
         TextView textView = (TextView)v.findViewById(R.id.article_real);
-        Button button = (Button) v.findViewById(R.id.update_button);
         setupTextview(textView);
-        setupbutton(button);
         return v;
     }
 
@@ -160,16 +158,7 @@ public class ReadTab extends Fragment {
 
     }
 
-    private void setupbutton(Button button) {
-        button.setOnClickListener(new View.OnClickListener(){
-           public void onClick(View v){
-                ServerSmogon sm = new ServerSmogon(getActivity(), gen, "update", pokemon,
-                        format, moveset, object, mHandler);
-                Thread thread = new Thread(sm);
-                thread.start();
-           }
-        });
-    }
+
 
     public static ReadTab newInstance(String text, String pokemon, String gen, String format,
                                       Handler m){

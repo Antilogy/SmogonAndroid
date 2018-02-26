@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,8 +17,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -35,7 +47,7 @@ import java.util.Scanner;
 public class pokearticle extends AppCompatActivity {
     ServerSmogon smogon;
     private Toolbar toolbar;
-    private TabLayout tabLayout;
+    private TabLayout tabLayout, tablayout2;
     private ViewPager viewPager;
     private String pokemon, gen;
     private final String gen1="rb",gen2="gs",gen3="rs",gen4="dp",gen5="bw",gen6="xy",gen7="sm";
@@ -45,6 +57,7 @@ public class pokearticle extends AppCompatActivity {
     TabActivity3 tab3;
     private int index;
     private Boolean test=false;
+    Handler handler;
 
 
     @Override
@@ -55,6 +68,27 @@ public class pokearticle extends AppCompatActivity {
         this.gen = bundle.getString("gen");
         setContentView(R.layout.pokearticle);
         this.index = bundle.getInt("index");
+        handler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message message){
+                String result = (String) message.obj;
+                switch(message.what){
+                    case 0:
+                        //setup pop window with warning
+                        setupPopWindow(message.what);
+                        break;
+
+                    case 1:
+                        //file was updated
+                        //update the contents of this view
+                        setupPopWindow(message.what);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        };
         callSmogon();
 
 
@@ -69,7 +103,6 @@ public class pokearticle extends AppCompatActivity {
     public void callSmogon(){
         JSONObject obj;
         JSONArray pokedex;
-        TabLayout tablayout2;
         Thread thread;
         TextView stats,overview, article;
         Boolean directory;
@@ -95,11 +128,12 @@ public class pokearticle extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        tablayout2 = (TabLayout) findViewById(R.id.format);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tablayout2 = (TabLayout) findViewById(R.id.format);
+
         //add a tab for all formats the pokemon is in
         setupFormat(tablayout2);
 
@@ -108,6 +142,26 @@ public class pokearticle extends AppCompatActivity {
 
 
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.update_button, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if(id== R.id.update_button){
+            //do something here
+            ServerSmogon sm = new ServerSmogon(this, gen, "updateAll", pokemon,
+                    handler);
+            Thread thread = new Thread(sm);
+            thread.start();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupFormat(TabLayout tablayout2) {
@@ -218,12 +272,13 @@ public class pokearticle extends AppCompatActivity {
     private void setupTab3(){
         JSONArray moveset;
         if(strtgy_art.length()==0){
-            tab3 = TabActivity3.newInstance(strtgy_art.toString(), pokemon, gen);
+            tab3 = TabActivity3.newInstance(strtgy_art.toString(), pokemon, gen, "no format");
         }
         else{
             try{
                 moveset = strtgy_art.getJSONObject(0).getJSONArray("movesets");
-                tab3 = TabActivity3.newInstance(moveset.toString(), pokemon, gen);
+                tab3 = TabActivity3.newInstance(moveset.toString(), pokemon, gen,
+                        strtgy_art.getJSONObject(0).getString("format"));
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -326,7 +381,6 @@ public class pokearticle extends AppCompatActivity {
         String proto = string.toLowerCase();
         String lower = "";
         Character c;
-        Boolean under=false;
 
         for(int i=0;i<proto.length();i++){
             c = proto.charAt(i);
@@ -364,5 +418,35 @@ public class pokearticle extends AppCompatActivity {
             string = string + '_';
             return string;
         }
+    }
+    private void setupPopWindow(int status){
+        CoordinatorLayout mainLayout = (CoordinatorLayout) findViewById(R.id.pokearticle);
+
+        //inflate the layout of the popupwindow
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_checkarticles, null);
+        //choose the popup window to use
+        if(status>0){
+            //success with update
+            popupView = inflater.inflate(R.layout.popup_success_update, null);
+        }
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        popupWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
+
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
     }
 }

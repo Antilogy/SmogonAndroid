@@ -54,25 +54,6 @@ public class readArticle extends AppCompatActivity {
         this.pokemon = bundle.getString("pokemon");
         this.gen = bundle.getString("gen");
         this.format = bundle.getString("format");
-        mHandler = new Handler(Looper.getMainLooper()){
-            @Override
-            public void handleMessage(Message message){
-                String result = (String) message.obj;
-                switch(message.what){
-                    case 0:
-                        //setup pop window
-                        setupPopWindow();
-                        break;
-
-                    case 1:
-                        //file was updated
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        };
         setupArticle();
 
 
@@ -101,7 +82,8 @@ public class readArticle extends AppCompatActivity {
         for(int i=0;i<article.length();i++){
             try{
                 obj = article.getJSONObject(i);
-                tab = ReadTab.newInstance(obj.toString(), pokemon, gen, format, mHandler);
+                tab = ReadTab.newInstance(obj.toString(), pokemon, gen,
+                        obj.getString("name"), mHandler);
                 adapter.addFragment(tab, obj.getString("name"));
             } catch(JSONException e){
                 e.printStackTrace();
@@ -145,29 +127,6 @@ public class readArticle extends AppCompatActivity {
         }
     }
 
-    private void setupPopWindow(){
-        CoordinatorLayout mainLayout = (CoordinatorLayout) findViewById(R.id.read_article);
 
-        //inflate the layout of the popupwindow
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_checkarticles, null);
-        // create the popup window
-        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        popupWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
-            }
-        });
-    }
 
 }

@@ -11,7 +11,7 @@
         android:layout_centerInParent="true"
         android:layout_margin="30dp"
         android:textSize="22sp"
-        android:text="@string/Warning"
+        android:text="@string/Success"
         android:textColor="@color/white"/>
 
 </RelativeLayout>

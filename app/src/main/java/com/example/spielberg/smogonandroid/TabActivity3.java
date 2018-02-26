@@ -41,6 +41,9 @@ public class TabActivity3 extends Fragment {
             }
             pokemon = bundle.getString("pokemon");
             gen = bundle.getString("gen");
+            if(format==null){
+                format = bundle.getString("format");
+            }
 
         } catch(JSONException e){
             e.printStackTrace();
@@ -121,12 +124,13 @@ public class TabActivity3 extends Fragment {
         });
         list.addView(tx);
     }
-    public static TabActivity3 newInstance(String text, String pokemon, String gen){
+    public static TabActivity3 newInstance(String text, String pokemon, String gen, String format){
         TabActivity3 tab = new TabActivity3();
         Bundle args = new Bundle();
         args.putString("movesets", text);
         args.putString("pokemon", pokemon);
         args.putString("gen", gen);
+        args.putString("format", format);
         tab.setArguments(args);
         return tab;
     }

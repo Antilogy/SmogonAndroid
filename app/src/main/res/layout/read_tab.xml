@@ -11,12 +11,7 @@
             android:layout_height="wrap_content"
             android:background="@color/black">
 
-            <Button
-                android:layout_alignParentEnd="true"
-                android:id="@+id/update_button"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="@string/update" />
+
 
             <TextView
                 android:layout_alignParentStart="true"
