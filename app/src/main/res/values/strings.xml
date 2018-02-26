@@ -13,7 +13,7 @@
     <string name="gen7">SMUSUM</string>
     <string name="profile">profile pic</string>
     <string name="welcome">Select your Gen</string>
-    <string name="Warning">Warning! \nArticle directory for this gen has not been created. Would you like to download articles from Smogon?</string>
+    <string name="Warning">Warning! \n File is already up-to-date.</string>
     <string name="search">Search Pokemon</string>
     <string name="stats">HP \u007C ATK \u007C DEF \u007C SPA \u007C SPD \u007C SPE</string>
     <string name="type">Type1 \u002F Type2</string>

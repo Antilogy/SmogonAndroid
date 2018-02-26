@@ -1,5 +1,6 @@
 package com.example.spielberg.smogonandroid;
 
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Html;
@@ -22,7 +23,8 @@ import org.json.JSONObject;
 
 public class ReadTab extends Fragment {
     JSONObject object;
-    String pokemon;
+    String pokemon, gen, format, moveset;
+    public Handler mHandler;
     public ReadTab(){
         // Required empty public constructor
     }
@@ -33,6 +35,9 @@ public class ReadTab extends Fragment {
         try{
             Bundle bundle = getArguments();
             object = new JSONObject(bundle.getString("article"));
+            pokemon = bundle.getString("pokemon");
+            gen = bundle.getString("gen");
+            format = bundle.getString("format");
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -56,7 +61,8 @@ public class ReadTab extends Fragment {
         int index;
         String title;
         try{
-            title = ("<h1>"+object.getString("name")+"</h1>");
+            moveset = object.getString("name");
+            title = ("<h1>"+moveset+"</h1>");
 
             text.setText( Html.fromHtml(title +"\n"));
             //add items
@@ -155,13 +161,26 @@ public class ReadTab extends Fragment {
     }
 
     private void setupbutton(Button button) {
+        button.setOnClickListener(new View.OnClickListener(){
+           public void onClick(View v){
+                ServerSmogon sm = new ServerSmogon(getActivity(), gen, "update", pokemon,
+                        format, moveset, object, mHandler);
+                Thread thread = new Thread(sm);
+                thread.start();
+           }
+        });
     }
 
-    public static ReadTab newInstance(String text){
+    public static ReadTab newInstance(String text, String pokemon, String gen, String format,
+                                      Handler m){
         ReadTab tab = new ReadTab();
         Bundle args = new Bundle();
         args.putString("article", text);
+        args.putString("pokemon", pokemon);
+        args.putString("gen", gen);
+        args.putString("format", format);
         tab.setArguments(args);
+        tab.mHandler = m;
         return tab;
     }
 }

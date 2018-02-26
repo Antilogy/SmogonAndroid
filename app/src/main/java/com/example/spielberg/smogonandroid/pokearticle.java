@@ -148,7 +148,7 @@ public class pokearticle extends AppCompatActivity {
                         tab2.newOverview(overview);
 
                         move = strtgy_art.getJSONObject(tab.getPosition()).getJSONArray("movesets");
-                        tab3.newMoveset(move.toString());
+                        tab3.newMoveset(move.toString(), format);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -218,12 +218,12 @@ public class pokearticle extends AppCompatActivity {
     private void setupTab3(){
         JSONArray moveset;
         if(strtgy_art.length()==0){
-            tab3 = TabActivity3.newInstance(strtgy_art.toString());
+            tab3 = TabActivity3.newInstance(strtgy_art.toString(), pokemon, gen);
         }
         else{
             try{
                 moveset = strtgy_art.getJSONObject(0).getJSONArray("movesets");
-                tab3 = TabActivity3.newInstance(moveset.toString());
+                tab3 = TabActivity3.newInstance(moveset.toString(), pokemon, gen);
             } catch (JSONException e){
                 e.printStackTrace();
             }

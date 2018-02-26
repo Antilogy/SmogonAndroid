@@ -26,6 +26,7 @@ import org.w3c.dom.Text;
 public class TabActivity3 extends Fragment {
     JSONArray strategy;
     LinearLayout list;
+    String pokemon, gen, format;
     public TabActivity3() {
         // Required empty public constructor
     }
@@ -35,7 +36,12 @@ public class TabActivity3 extends Fragment {
         super.onCreate(savedInstanceState);
         try{
             Bundle bundle = getArguments();
-            strategy = new JSONArray(bundle.getString("movesets"));
+            if(strategy==null){
+                strategy = new JSONArray(bundle.getString("movesets"));
+            }
+            pokemon = bundle.getString("pokemon");
+            gen = bundle.getString("gen");
+
         } catch(JSONException e){
             e.printStackTrace();
         }
@@ -103,6 +109,9 @@ public class TabActivity3 extends Fragment {
 
                 bundle.putString("article", strategy.toString());
                 bundle.putInt("index", index);
+                bundle.putString("pokemon", pokemon);
+                bundle.putString("gen", gen);
+                bundle.putString("format", format);
 
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -112,18 +121,20 @@ public class TabActivity3 extends Fragment {
         });
         list.addView(tx);
     }
-    public static TabActivity3 newInstance(String text){
+    public static TabActivity3 newInstance(String text, String pokemon, String gen){
         TabActivity3 tab = new TabActivity3();
         Bundle args = new Bundle();
         args.putString("movesets", text);
-
+        args.putString("pokemon", pokemon);
+        args.putString("gen", gen);
         tab.setArguments(args);
         return tab;
     }
 
-    public void newMoveset(String text){
+    public void newMoveset(String text, String format){
         try{
             strategy = new JSONArray(text);
+            this.format = format;
             if(list!=null){
                 setupArticles();
             }
