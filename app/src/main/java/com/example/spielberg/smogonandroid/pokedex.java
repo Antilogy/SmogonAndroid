@@ -6,13 +6,19 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -37,15 +43,22 @@ import java.util.Scanner;
 public class pokedex extends AppCompatActivity {
     ServerSmogon sm;
     String generation;
+    private Button search;
+    private SearchSettings settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        settings = new SearchSettings();
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         setContentView(R.layout.pokedex_view);
         populate_pokedex(bundle.getString("gen"));
-
+        search = (Button) findViewById(R.id.button);
+        search.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                setupPopWindow(0);
+            }
+        });
     }
 
     private void populate_pokedex(String gen) {
@@ -77,10 +90,16 @@ public class pokedex extends AppCompatActivity {
 
     private void addpokemon(JSONArray pokemon) {
         TableLayout table = (TableLayout) findViewById(R.id.pokemon_results);
+        TableLayout header_table = (TableLayout) findViewById(R.id.pokemon_header_row);
         TableRow.LayoutParams params;
         table.removeAllViews();
+        header_table.removeAllViews();
         TableRow row;
         TextView tx;
+        JSONArray types;
+        JSONObject stats;
+        String typeString, statString;
+        ImageView profile;
         //add header row
         row = new TableRow(this);
         row.setId(View.generateViewId());
@@ -95,9 +114,14 @@ public class pokedex extends AppCompatActivity {
         addView(row,getText(R.string.stats));//add stats column
 
         row.setPadding(5,5,5,5);
+        row.setGravity(Gravity.CENTER_HORIZONTAL);
+
+
 
         //add row
-        table.addView(row);
+        header_table.addView(row);
+        //table.addView(row);
+
         //add pokemon entries
         for(int i=0;i<pokemon.length();i++){
             row = new TableRow(this);
@@ -105,7 +129,7 @@ public class pokedex extends AppCompatActivity {
             row.setBackgroundColor(Color.BLACK);
             row.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
-            ImageView profile = new ImageView(this);
+            profile = new ImageView(this);
             profile.setLayoutParams(new TableRow.LayoutParams(
                     TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
             profile.setId(View.generateViewId());
@@ -116,7 +140,33 @@ public class pokedex extends AppCompatActivity {
             row.addView(profile);
 
             try{
+                //add name
                 addView(row,  pokemon.getJSONObject(i).getString("name"));
+                //add type1/type2
+                types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
+                        0).getJSONArray("types");
+                typeString = "";
+                for(int g=0;g<types.length();g++){
+                    //build the string for types
+                    typeString = typeString + types.getString(g);
+                    if(g<types.length()-1){
+                        typeString = typeString + " / ";
+                    }
+                }
+                addView(row, typeString);
+                //add stats
+                statString = "";
+                stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
+                        0);
+
+                statString = (Integer.toString(stats.getInt("hp"))+" | ");//get hp
+                statString = statString + (Integer.toString(stats.getInt("atk"))+" | ");//get atk
+                statString = statString + (Integer.toString(stats.getInt("def"))+" | ");//get def
+                statString = statString + (Integer.toString(stats.getInt("spa"))+" | ");//get spa
+                statString = statString + (Integer.toString(stats.getInt("spd"))+" | ");//get spd
+                statString = statString + (Integer.toString(stats.getInt("spe")));//get spe
+                addView(row, statString);
+
 
             }catch (JSONException e){
                 e.printStackTrace();
@@ -171,6 +221,7 @@ public class pokedex extends AppCompatActivity {
 
         tx.setTextColor(Color.WHITE);
         tx.setPadding(5,5,5,5);
+
         row.addView(tx);
     }
 
@@ -214,6 +265,48 @@ public class pokedex extends AppCompatActivity {
 
 
 
+    }
+
+    private void setupPopWindow(int status){
+        ConstraintLayout mainLayout = (ConstraintLayout) findViewById(R.id.pokedex_view);
+
+        //inflate the layout of the popupwindow
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View popupView = inflater.inflate(R.layout.search_tab, null);
+        Button sear = (Button) popupView.findViewById(R.id.search);
+
+        //choose the popup window to use
+
+
+        // create the popup window
+        int width = (mainLayout.getWidth()/4)*3;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // show the popup window
+        popupWindow.setAnimationStyle(R.style.Animation);
+        popupWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
+        sear.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                populateSearch(popupView);
+                popupWindow.dismiss();
+            }
+        });
+        // dismiss the popup window when touched
+        popupView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                populateSearch(v);
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+    }
+
+    public void populateSearch(View v){
+        TextView text = (TextView) v.findViewById(R.id.search_name);
+        settings.setPokemon(text.getText().toString());
     }
 
 }

@@ -13,7 +13,7 @@
     <string name="gen7">SMUSUM</string>
     <string name="profile">profile pic</string>
     <string name="welcome">Select your Gen</string>
-    <string name="Warning">Warning! \nFile is already up-to-date.</string>
+    <string name="Warning">Warning! \nArticles are already up-to-date.</string>
     <string name="Success">Success! \nStrategies for this pokemon were updated!</string>
     <string name="search">Search Pokemon</string>
     <string name="stats">HP \u007C ATK \u007C DEF \u007C SPA \u007C SPD \u007C SPE</string>
@@ -23,4 +23,14 @@
     <string name="backward"> \u002F </string>
     <string name="colon">\u003A</string>
     <string name="Update">Update All Articles</string>
+    <string name="HP">HP</string>
+    <string name="Atk">Atk</string>
+    <string name="Def">Def</string>
+    <string name="Spa">Spa</string>
+    <string name="Spd">Spd</string>
+    <string name="Spe">Spe</string>
+    <string name="Name">Name</string>
+    <string name="Type1">Type1</string>
+    <string name="Type2">Type2</string>
+    <string name="Ability">Ability</string>
 </resources>

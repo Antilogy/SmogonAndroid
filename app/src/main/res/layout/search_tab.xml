@@ -1,6 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blue_border">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:orientation="vertical" >
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="25dp"
+            android:background="#000000"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/search_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:textColor="@color/white"
+                android:hint="@string/Name"
+                android:textColorHint="@color/white"/>
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="@string/Type1" />
+
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="18sp"/>
+
+            <Spinner
+                android:id="@+id/spinner3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/HP"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/switch2"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Atk"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/switch3"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Def"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/switch4"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Spa"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/switch5"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Spd"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Switch
+                android:id="@+id/switch6"
+                android:textColor="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Spe"
+                android:paddingLeft="@dimen/padding_switch"
+                android:paddingRight="@dimen/padding_switch"
+                android:background="@drawable/border"
+                android:textSize="18sp"/>
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/search"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

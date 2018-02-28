@@ -82,6 +82,7 @@ public class pokearticle extends AppCompatActivity {
                         //file was updated
                         //update the contents of this view
                         setupPopWindow(message.what);
+                        refreshLayout();
                         break;
 
                     default:
@@ -100,6 +101,12 @@ public class pokearticle extends AppCompatActivity {
 
     }
 
+    /**
+     * Refresh contents of this layout
+     */
+    public void refreshLayout(){
+        callSmogon();
+    }
     public void callSmogon(){
         JSONObject obj;
         JSONArray pokedex;
@@ -168,6 +175,7 @@ public class pokearticle extends AppCompatActivity {
         String format;
         TabLayout.Tab format_tab;
         int length = strtgy_art.length();
+        tablayout2.removeAllTabs();
         if(length >0){
             for(int j=0;j<length;j++){
                 try{
