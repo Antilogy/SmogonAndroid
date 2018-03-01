@@ -15,13 +15,20 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,10 +52,20 @@ public class pokedex extends AppCompatActivity {
     String generation;
     private Button search;
     private SearchSettings settings;
+    Switch switcher[];
+    JSONArray types, abilities;
+    List<String> typeList, abilityList, type2List;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settings = new SearchSettings();
+        typeList = new ArrayList<>();
+        type2List = new ArrayList<>();
+        abilityList = new ArrayList<>();
+        switcher = new Switch[6];
+        typeList.add("Type1");
+        type2List.add("Type2");
+        abilityList.add("Ability");
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         setContentView(R.layout.pokedex_view);
@@ -75,6 +92,16 @@ public class pokedex extends AppCompatActivity {
             if(scan.hasNext()){
                 JSONObject obj = new JSONObject(scan.nextLine());
                 pokemon = obj.getJSONArray("pokemon");
+                types = obj.getJSONArray("types");
+                for(int i=0;i<types.length();i++){//add all types to typeList
+                    typeList.add(types.getJSONObject(i).getString("name"));
+                    type2List.add(types.getJSONObject(i).getString("name"));
+                }
+
+                abilities = obj.getJSONArray("abilities");
+                for(int i=0;i<abilities.length();i++){//add all abilities to abilityList
+                    abilityList.add(abilities.getJSONObject(i).getString("name"));
+                }
                 addpokemon(pokemon);
 
 
@@ -275,7 +302,20 @@ public class pokedex extends AppCompatActivity {
         final View popupView = inflater.inflate(R.layout.search_tab, null);
         Button sear = (Button) popupView.findViewById(R.id.search);
 
-        //choose the popup window to use
+        //setup popupView
+        Spinner spin1 = (Spinner) popupView.findViewById(R.id.spinner);
+        Spinner spin2 = (Spinner) popupView.findViewById(R.id.spinner2);
+        Spinner spin3 = (Spinner) popupView.findViewById(R.id.spinner3);
+
+
+        switcher[0] = (Switch) popupView.findViewById(R.id.switch1);
+        switcher[1] = (Switch) popupView.findViewById(R.id.switch2);
+        switcher[2] = (Switch) popupView.findViewById(R.id.switch3);
+        switcher[3] = (Switch) popupView.findViewById(R.id.switch4);
+        switcher[4] = (Switch) popupView.findViewById(R.id.switch5);
+        switcher[5] = (Switch) popupView.findViewById(R.id.switch6);
+
+
 
 
         // create the popup window
@@ -284,6 +324,10 @@ public class pokedex extends AppCompatActivity {
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
+        setupType1spinner(spin1);
+        setupType2spinner(spin2);
+        setupAbilitySpinner(spin3);
+        setupSwitchs();
         // show the popup window
         popupWindow.setAnimationStyle(R.style.Animation);
         popupWindow.showAtLocation(mainLayout, Gravity.CENTER, 0, 0);
@@ -303,6 +347,108 @@ public class pokedex extends AppCompatActivity {
             }
         });
     }
+
+    private void setupSwitchs() {
+        CompoundButton.OnCheckedChangeListener changeChecker = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    for(int i=0;i<switcher.length;i++){
+                        if(compoundButton != switcher[i]){
+                            switcher[i].setChecked(false);
+                        }
+                    }
+                }
+            }
+        };
+        for(int i=0;i<switcher.length;i++){
+            switcher[i].setOnCheckedChangeListener(changeChecker);
+        }
+    }
+
+    /**
+     * This function sets up the types for the first spinner
+     * @param spin The spinner will be given the types for type1
+     */
+    private void setupType1spinner(Spinner spin) {
+
+        ArrayAdapter<String> spinnerAdapter = arrayAdapt(typeList);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+        spin.setAdapter(spinnerAdapter);
+        spin.setOnItemSelectedListener(AdapterListener());
+
+    }
+
+    private void setupType2spinner(Spinner spin){
+        ArrayAdapter<String> spinnerAdapter = arrayAdapt(type2List);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+        spin.setAdapter(spinnerAdapter);
+        spin.setOnItemSelectedListener(AdapterListener());
+    }
+
+    private void setupAbilitySpinner(Spinner spin){
+        ArrayAdapter<String> spinnerAdapter = arrayAdapt(abilityList);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+        spin.setAdapter(spinnerAdapter);
+        spin.setOnItemSelectedListener(AdapterListener());
+    }
+
+    /**
+     * Creates an arrayAdapter for the specified List<string> variable
+     * @param list List variable with strings
+     * @return new arrayadapter with hint slot
+     */
+    private ArrayAdapter<String> arrayAdapt(List<String> list){
+         return new ArrayAdapter<String>(
+                this, R.layout.spinner_item, list){
+            @Override
+            public boolean isEnabled(int position){
+                if(position ==0){
+                    // disable first item
+                    //first item will be for hint
+                    return true;
+                }
+                else{
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent){
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    tv.setTextColor(Color.GRAY);
+                }
+                else{
+                    tv.setTextColor(Color.WHITE);
+                }
+                return view;
+            }
+        };
+    }
+
+    public AdapterView.OnItemSelectedListener AdapterListener(){
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItemText = (String) parent.getItemAtPosition(position);
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if(position > 0){
+                    // Notify the selected item text
+                    Toast.makeText
+                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+    }
+
 
     public void populateSearch(View v){
         TextView text = (TextView) v.findViewById(R.id.search_name);

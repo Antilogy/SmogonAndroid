@@ -1,6 +1,7 @@
 package com.example.spielberg.smogonandroid;
 
 import android.util.Log;
+import android.view.View;
 
 /**
  * Created by Spielberg on 2/27/2018.
@@ -51,6 +52,10 @@ public class SearchSettings {
 
     public int getStatSwitch(){
         return statSwitch;
+    }
+
+    public void applySettings(View v){
+
     }
 
 
