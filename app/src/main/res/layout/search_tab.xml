@@ -56,6 +56,8 @@
                 android:text="@string/HP"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 
@@ -67,6 +69,8 @@
                 android:text="@string/Atk"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 
@@ -78,6 +82,8 @@
                 android:text="@string/Def"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 
@@ -89,6 +95,8 @@
                 android:text="@string/Spa"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 
@@ -100,6 +108,8 @@
                 android:text="@string/Spd"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 
@@ -111,6 +121,8 @@
                 android:text="@string/Spe"
                 android:paddingLeft="@dimen/padding_switch"
                 android:paddingRight="@dimen/padding_switch"
+                android:paddingTop="@dimen/padding_switch"
+                android:paddingBottom="@dimen/padding_switch"
                 android:background="@drawable/border"
                 android:textSize="18sp"/>
 

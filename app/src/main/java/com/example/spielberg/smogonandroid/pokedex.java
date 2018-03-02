@@ -53,8 +53,9 @@ public class pokedex extends AppCompatActivity {
     private Button search;
     private SearchSettings settings;
     Switch switcher[];
-    JSONArray types, abilities;
+    JSONArray types, abilities, pokemon;
     List<String> typeList, abilityList, type2List;
+    TableLayout table;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +80,7 @@ public class pokedex extends AppCompatActivity {
     }
 
     private void populate_pokedex(String gen) {
-        JSONArray pokemon;
+
         generation = gen;
         //download pokemon info on first bootup
         //check if directory is created and has files
@@ -92,6 +93,7 @@ public class pokedex extends AppCompatActivity {
             if(scan.hasNext()){
                 JSONObject obj = new JSONObject(scan.nextLine());
                 pokemon = obj.getJSONArray("pokemon");
+                settings.setPokelist(pokemon);
                 types = obj.getJSONArray("types");
                 for(int i=0;i<types.length();i++){//add all types to typeList
                     typeList.add(types.getJSONObject(i).getString("name"));
@@ -116,7 +118,7 @@ public class pokedex extends AppCompatActivity {
 
 
     private void addpokemon(JSONArray pokemon) {
-        TableLayout table = (TableLayout) findViewById(R.id.pokemon_results);
+        table = (TableLayout) findViewById(R.id.pokemon_results);
         TableLayout header_table = (TableLayout) findViewById(R.id.pokemon_header_row);
         TableRow.LayoutParams params;
         table.removeAllViews();
@@ -315,9 +317,18 @@ public class pokedex extends AppCompatActivity {
         switcher[4] = (Switch) popupView.findViewById(R.id.switch5);
         switcher[5] = (Switch) popupView.findViewById(R.id.switch6);
 
+        //set previous settings
 
+        if(settings.getStatSwitch()<6){
+            switcher[settings.getStatSwitch()].setChecked(true);
+        }
 
+        if(!(settings.getPokemon().compareTo("")==0)){
+            TextView text = (TextView) popupView.findViewById(R.id.search_name);
+            text.setText(settings.getPokemon());
+        }
 
+        //end of previous settings
         // create the popup window
         int width = (mainLayout.getWidth()/4)*3;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -376,6 +387,10 @@ public class pokedex extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
         spin.setAdapter(spinnerAdapter);
         spin.setOnItemSelectedListener(AdapterListener());
+        if(settings.getType1() != null){
+            spin.setSelection(spinnerAdapter.getPosition(settings.getType1()));
+        }
+
 
     }
 
@@ -384,6 +399,9 @@ public class pokedex extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
         spin.setAdapter(spinnerAdapter);
         spin.setOnItemSelectedListener(AdapterListener());
+        if(settings.getType2() != null){
+            spin.setSelection(spinnerAdapter.getPosition(settings.getType2()));
+        }
     }
 
     private void setupAbilitySpinner(Spinner spin){
@@ -391,6 +409,9 @@ public class pokedex extends AppCompatActivity {
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
         spin.setAdapter(spinnerAdapter);
         spin.setOnItemSelectedListener(AdapterListener());
+        if(settings.getAbility() != null){
+            spin.setSelection(spinnerAdapter.getPosition(settings.getAbility()));
+        }
     }
 
     /**
@@ -452,7 +473,28 @@ public class pokedex extends AppCompatActivity {
 
     public void populateSearch(View v){
         TextView text = (TextView) v.findViewById(R.id.search_name);
+        Spinner spin1 = (Spinner) v.findViewById(R.id.spinner);
+        Spinner spin2 = (Spinner) v.findViewById(R.id.spinner2);
+        Spinner spin3 = (Spinner) v.findViewById(R.id.spinner3);
+        Boolean flag = false;
+        //get the switch that is true
+        for(int i=0;i<switcher.length;i++){
+            if(switcher[i].isChecked()){
+                settings.setStatSwitch(i);
+                flag = true;//check if a stat switch was turned on
+                break;
+            }
+        }
+        //if no switch was turned on
+        if(!flag){
+            settings.setStatSwitch(6);
+        }
+
         settings.setPokemon(text.getText().toString());
+        settings.setType1((String) spin1.getSelectedItem());
+        settings.setType2((String) spin2.getSelectedItem());
+        settings.setAbility((String) spin3.getSelectedItem());
+        settings.applySettings(table);
     }
 
 }
