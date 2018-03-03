@@ -33,4 +33,6 @@
     <string name="Type1">Type1</string>
     <string name="Type2">Type2</string>
     <string name="Ability">Ability</string>
+    <string name="pokedex_activity">Pokedex \nSearch Pokemon and read analyses articles!</string>
+    <string name="title_selection">Select Your Function!</string>
 </resources>

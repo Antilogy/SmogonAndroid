@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_switch">10sp</dimen>
+    <dimen name="LargeText">22sp</dimen>
+    <dimen name="MediumText">18sp</dimen>
+    <dimen name="SmallText">14sp</dimen>
 </resources>

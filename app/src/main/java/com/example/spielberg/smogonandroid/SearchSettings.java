@@ -86,44 +86,65 @@ public class SearchSettings {
 
     public void applySettings(TableLayout v){
         results_table = v;
-//        for(int i=0;i<v.getChildCount();i++){
-//            TableRow row = (TableRow) v.getChildAt(i);
-//            applyName(row);
-//            applyType1(row);
-//            applyType2(row);
-//            applyAbility(row);
-//        }
+
+
+        //otherwise perform a multithreaded search
         Thread thread1,thread2, thread3;
         int children = v.getChildCount();
         rows = new int[children];
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message message){
-                String result = (String) message.obj;
-                switch(message.what){
-                    case 0:
-                        break;
-
-                    case 1:
-                        threadcount++;
-                        //check if all threads are finished
-                        if(threadcount ==3 ){
-                            setVisibility();
-                            threadcount = 0;
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
+                int[] result = (int[]) message.obj;
+                setVisibility(result);
+//                switch(message.what){
+//                    case 0:
+//                        threadcount++;
+//                        //check if all threads are finished
+//                        if(threadcount ==3 ){
+//                            setVisibility();
+//                            threadcount = 0;
+//                        }
+//                        else{
+//                            setVisibility(result);
+//                        }
+//                        break;
+//
+//                    case 1:
+//                        threadcount++;
+//                        //check if all threads are finished
+//                        if(threadcount ==3 ){
+//                            setVisibility();
+//                            threadcount = 0;
+//                        }
+//                        else{
+//                            setVisibility(result);
+//                        }
+//                        break;
+//
+//                    case 2:
+//                        threadcount++;
+//                        //check if all threads are finished
+//                        if(threadcount ==3 ){
+//                            setVisibility();
+//                            threadcount = 0;
+//                        }
+//                        else{
+//                            setVisibility(result);
+//                        }
+//                        break;
+//
+//                    default:
+//                        break;
+//                }
             }
         };
         SearchEngine one = new SearchEngine(handler, v, 0,
-                children/3, this);
+                children/3, this, 0);
         SearchEngine two = new SearchEngine(handler, v, children/3,
-                (children/3)*2, this);
+                (children/3)*2, this, 1);
         SearchEngine three = new SearchEngine(handler, v, (children/3)*2,
-                (children/3)*3 + (children%3), this);
+                (children/3)*3 + (children%3), this, 2);
         thread1 = new Thread(one);
         thread2 = new Thread(two);
         thread3 = new Thread(three);
@@ -141,6 +162,12 @@ public class SearchSettings {
             TableRow row = (TableRow) results_table.getChildAt(i);
             row.setVisibility(rows[i]);
 
+        }
+    }
+    public void setVisibility(int[] range){
+        for(int i=range[0];i<range[1];i++){
+            TableRow row = (TableRow) results_table.getChildAt(i);
+            row.setVisibility(rows[i]);
         }
     }
 

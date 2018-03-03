@@ -18,16 +18,21 @@ import org.json.JSONException;
 public class SearchEngine implements Runnable {
     private Handler mHandler;
     private TableLayout table;
-    private int start, end;
+    private int start, end, threadID;
     private SearchSettings settings;
+    private int index[];
 
     public SearchEngine(Handler hand, TableLayout table,
-                        int start, int end, SearchSettings settings){
+                        int start, int end, SearchSettings settings, int id){
         mHandler = hand;
         this.table = table;
         this.start = start;
         this.end = end;
         this.settings = settings;
+        threadID = id;
+        index = new int[2];
+        index[0] = start;
+        index[1] = end;
     }
 
 
@@ -42,13 +47,23 @@ public class SearchEngine implements Runnable {
          */
         applySettings(table);
         //report when done
-        Message message = mHandler.obtainMessage(1, "Done");
+        Message message = mHandler.obtainMessage(threadID, index);
         message.sendToTarget();
 
     }
 
     public void applySettings(TableLayout v){
 
+        //perform the fastest search ever
+        if(settings.getPokemon() =="" && settings.getType1()=="Type1" &&
+                settings.getType2()=="Type2" && settings.getAbility() == "Ability"){
+            for(int i=start;i<end;i++){
+                settings.setView(i, View.VISIBLE);
+
+            }
+            return;
+        }
+        //otherwise perform regular search
         for(int i=start;i<end;i++){
             TableRow row = (TableRow) v.getChildAt(i);
             applyName(row, i);
