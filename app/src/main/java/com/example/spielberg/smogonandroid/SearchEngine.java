@@ -11,6 +11,9 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 /**
  * Created by Spielberg on 3/1/2018.
  */
@@ -35,24 +38,71 @@ public class SearchEngine implements Runnable {
         index[1] = end;
     }
 
+    public SearchEngine(Handler hand, SearchSettings settings, int id){
+        mHandler = hand;
+        this.settings = settings;
+        threadID = id;
+        index = new int[2];
+        index[0] = start;
+        index[1] = end;
+    }
 
     @Override
     public void run(){
-
-
         // Moves the current Thread into the Background
         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         /**
          * Code you want to run on the thread goes here
          */
-        applySettings(table);
+        ArrayList<RowStats> list = settings.getResults();
+        if(threadID == 4){
+            //do sorting instead
+            findBigg(list, 0, list.size(), settings.getStatSwitch());
+            Message message = mHandler.obtainMessage(threadID, index);
+            message.sendToTarget();
+            return;
+        }
+        applySettings(list);
         //report when done
         Message message = mHandler.obtainMessage(threadID, index);
         message.sendToTarget();
 
     }
 
-    public void applySettings(TableLayout v){
+    /**
+     * sort array according to the stat value in descending order
+     * @param array
+     * @param index
+     * @param size
+     * @param stat
+     */
+    public void findBigg(ArrayList<RowStats> array, int index, int size, int stat){
+        int handle, hindex = index;
+        RowStats rowStats = array.get(index);
+        handle =  array.get(index).stats[stat];
+
+        //compare the handle to all values
+        if(hindex==array.size()-1){
+            array.remove(hindex);
+            array.add(0, rowStats);
+            return;
+        }
+        for(int j=index+1;j<(size);j++){
+            if(handle >  array.get(j).stats[stat]){
+                rowStats = array.get(j);
+                handle = array.get(j).stats[stat];
+                hindex = j;
+            }
+
+
+        }
+        array.remove(hindex);
+        array.add(0, rowStats);
+        findBigg(array, index+1, size, stat);
+
+    }
+
+    public void applySettings(ArrayList<RowStats> v){
 
         //perform the fastest search ever
         if(settings.getPokemon() =="" && settings.getType1()=="Type1" &&
@@ -65,14 +115,16 @@ public class SearchEngine implements Runnable {
         }
         //otherwise perform regular search
         for(int i=start;i<end;i++){
-            TableRow row = (TableRow) v.getChildAt(i);
+            TableRow row = v.get(i).row;
             applyName(row, i);
             applyType1(row, i);
             applyType2(row, i);
             applyAbility(row, i);
+
         }
 
     }
+
 
     private void applyAbility(TableRow row, int rowindex) {
         String text =((TextView) row.getChildAt(0)).getText().toString();

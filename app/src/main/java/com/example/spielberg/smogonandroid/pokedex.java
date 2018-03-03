@@ -56,6 +56,8 @@ public class pokedex extends AppCompatActivity {
     JSONArray types, abilities, pokemon;
     List<String> typeList, abilityList, type2List;
     TableLayout table;
+    int statOrder;//current order of rows by stat
+    ArrayList<RowStats> myList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +69,8 @@ public class pokedex extends AppCompatActivity {
         typeList.add("Type1");
         type2List.add("Type2");
         abilityList.add("Ability");
+        statOrder = 6;
+        myList = new ArrayList<>();
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         setContentView(R.layout.pokedex_view);
@@ -124,11 +128,12 @@ public class pokedex extends AppCompatActivity {
         table.removeAllViews();
         header_table.removeAllViews();
         TableRow row;
-        TextView tx;
         JSONArray types;
         JSONObject stats;
         String typeString, statString;
         ImageView profile;
+        RowStats rowstat;
+        int[] pokestat = new int[6];
         //add header row
         row = new TableRow(this);
         row.setId(View.generateViewId());
@@ -188,12 +193,19 @@ public class pokedex extends AppCompatActivity {
                 stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0);
 
-                statString = (Integer.toString(stats.getInt("hp"))+" | ");//get hp
-                statString = statString + (Integer.toString(stats.getInt("atk"))+" | ");//get atk
-                statString = statString + (Integer.toString(stats.getInt("def"))+" | ");//get def
-                statString = statString + (Integer.toString(stats.getInt("spa"))+" | ");//get spa
-                statString = statString + (Integer.toString(stats.getInt("spd"))+" | ");//get spd
-                statString = statString + (Integer.toString(stats.getInt("spe")));//get spe
+                pokestat = new int[6];
+                pokestat[0] = stats.getInt("hp");
+                pokestat[1] = stats.getInt("atk");
+                pokestat[2] = stats.getInt("def");
+                pokestat[3] = stats.getInt("spa");
+                pokestat[4] = stats.getInt("spd");
+                pokestat[5] = stats.getInt("spe");
+                statString = (Integer.toString(pokestat[0])+" | ");//get hp
+                statString = statString + (Integer.toString(pokestat[1])+" | ");//get atk
+                statString = statString + (Integer.toString(pokestat[2])+" | ");//get def
+                statString = statString + (Integer.toString(pokestat[3])+" | ");//get spa
+                statString = statString + (Integer.toString(pokestat[4])+" | ");//get spd
+                statString = statString + (Integer.toString(pokestat[5]));//get spe
                 addView(row, statString);
 
 
@@ -222,6 +234,9 @@ public class pokedex extends AppCompatActivity {
                 }
             });
 
+            //add rowstat to arraylist
+            rowstat = new RowStats(row, pokestat);
+            myList.add(rowstat);
             table.addView(row);
 
 
@@ -494,6 +509,7 @@ public class pokedex extends AppCompatActivity {
         settings.setType1((String) spin1.getSelectedItem());
         settings.setType2((String) spin2.getSelectedItem());
         settings.setAbility((String) spin3.getSelectedItem());
+        settings.setResults(myList);
         settings.applySettings(table);
     }
 

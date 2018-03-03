@@ -12,6 +12,8 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 /**
  * Created by Spielberg on 2/27/2018.
  */
@@ -23,7 +25,10 @@ public class SearchSettings {
     private int rows[];
     private Handler handler;
     private int threadcount;
+    private ArrayList<RowStats> results;
+    private ArrayList<Integer> visibility_results;
     private TableLayout results_table;
+    private SearchSettings original;
     //statSwitch = 0 HP
     //statSwitch = 1 Atk
     //statSwitch = 2 Def
@@ -36,6 +41,7 @@ public class SearchSettings {
         //empty constructor
         pokemon = "";
         threadcount = 0;
+        original = this;
     }
     public void setPokemon(String name){
         pokemon = name.toLowerCase();
@@ -56,6 +62,10 @@ public class SearchSettings {
 
     public void setStatSwitch(int i){
         statSwitch = i;
+    }
+
+    public void setResults(ArrayList<RowStats> list){
+        results = list;
     }
 
     public String getPokemon(){
@@ -80,8 +90,12 @@ public class SearchSettings {
 
     public JSONArray getPokelist(){ return pokelist; }
 
+    public ArrayList<RowStats> getResults(){
+        return results;
+    }
+
     public void setView(int index, int visibility){
-        rows[index] = visibility;
+        results.get(index).visibility = visibility;
     }
 
     public void applySettings(TableLayout v){
@@ -89,14 +103,33 @@ public class SearchSettings {
 
 
         //otherwise perform a multithreaded search
-        Thread thread1,thread2, thread3;
+        Thread thread1,thread2, thread3, thread4;
         int children = v.getChildCount();
         rows = new int[children];
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message message){
                 int[] result = (int[]) message.obj;
-                setVisibility(result);
+                Thread thread4;
+                setVisibility(result, message.what);
+                threadcount++;
+                if(threadcount==3){
+                    //activate the sort thread
+                    if(statSwitch<6){
+                        //create sorting thread
+                        SearchEngine four = new SearchEngine(this, original,4);
+                        thread4 = new Thread(four);
+                        thread4.start();
+                    }
+                    threadcount = 0;
+                    return;
+                }
+                if(message.what == 4){
+                    //the sort thread is finished
+                    threadcount = 0;
+                    return;
+                }
+
 //                switch(message.what){
 //                    case 0:
 //                        threadcount++;
@@ -157,17 +190,20 @@ public class SearchSettings {
 
     }
 
-    public void setVisibility(){
-        for(int i=0;i<results_table.getChildCount();i++){
-            TableRow row = (TableRow) results_table.getChildAt(i);
-            row.setVisibility(rows[i]);
 
+    public void setVisibility(int[] range, int id){
+        if(id==4){
+            //use sorted list instead
+            results_table.removeAllViews();
+            for(int i=0;i<results.size();i++){
+                TableRow row = results.get(i).row;
+                row.setVisibility(results.get(i).visibility);
+                results_table.addView(row);
+            }
         }
-    }
-    public void setVisibility(int[] range){
         for(int i=range[0];i<range[1];i++){
-            TableRow row = (TableRow) results_table.getChildAt(i);
-            row.setVisibility(rows[i]);
+            TableRow row = results.get(i).row;
+            row.setVisibility(results.get(i).visibility);
         }
     }
 
