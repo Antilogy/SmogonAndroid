@@ -71,10 +71,10 @@ public class SearchEngine implements Runnable {
 
     /**
      * sort array according to the stat value in descending order
-     * @param array
-     * @param index
-     * @param size
-     * @param stat
+     * @param array the array that will be sorted
+     * @param index the place to start the comparisons
+     * @param size the size of the array
+     * @param stat the value used for comparisons
      */
     public void findBigg(ArrayList<RowStats> array, int index, int size, int stat){
         int handle, hindex = index;

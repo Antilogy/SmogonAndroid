@@ -1,11 +1,16 @@
 package com.example.spielberg.smogonandroid;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -58,6 +63,10 @@ public class pokedex extends AppCompatActivity {
     TableLayout table;
     int statOrder;//current order of rows by stat
     ArrayList<RowStats> myList;
+    ArrayList<RowStats>[] result_list;
+    Handler handler;//used to save results of thread rows
+    int threadcount;//number of tablethreads that are finished
+    ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +79,9 @@ public class pokedex extends AppCompatActivity {
         type2List.add("Type2");
         abilityList.add("Ability");
         statOrder = 6;
+        threadcount = 0;
         myList = new ArrayList<>();
+        result_list = new ArrayList[2];
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         setContentView(R.layout.pokedex_view);
@@ -81,11 +92,38 @@ public class pokedex extends AppCompatActivity {
                 setupPopWindow(0);
             }
         });
+
     }
 
     private void populate_pokedex(String gen) {
 
         generation = gen;
+        handler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message message){
+                ArrayList<RowStats> results = (ArrayList<RowStats>) message.obj;
+                threadcount++;
+                switch(message.what){
+                    case 0:
+                        result_list[message.what] = results;
+                        refreshTable(message.what);
+                        break;
+
+                    case 1:
+                        result_list[message.what] = results;
+                        refreshTable(message.what);
+                        break;
+                }
+            }
+        };
+
+        dialog=new ProgressDialog(this);
+        dialog.setMessage("Loading Pokedex Results");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
+
+
         //download pokemon info on first bootup
         //check if directory is created and has files
         setupDirectory(gen);
@@ -109,6 +147,17 @@ public class pokedex extends AppCompatActivity {
                     abilityList.add(abilities.getJSONObject(i).getString("name"));
                 }
                 addpokemon(pokemon);
+                //test threadrows
+                TableThread table1 = new TableThread(handler, getBaseContext(), 0,
+                        pokemon.length()/2, pokemon, 0, generation);
+                TableThread table2 = new TableThread(handler, getBaseContext(), pokemon.length()/2,
+                        (pokemon.length()/2)*2 +pokemon.length()%2, pokemon, 1, generation);
+
+                Thread thread = new Thread(table1);
+                Thread thread1 = new Thread(table2);
+
+                thread.start();
+                thread1.start();
 
 
 
@@ -117,9 +166,25 @@ public class pokedex extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
     }
 
+    private void refreshTable(int id){
+        if(threadcount == 2){
+            table.removeAllViews();
+            for(int i=0; i<result_list.length;i++){
+                myList.addAll(result_list[i]);
+                //refresh tablelayout
+            }
+            for(int i=0;i<myList.size();i++){
+                table.addView(myList.get(i).row);
+            }
+            threadcount = 0;
+            dialog.dismiss();
+
+        }
+
+
+    }
 
     private void addpokemon(JSONArray pokemon) {
         table = (TableLayout) findViewById(R.id.pokemon_results);
@@ -154,93 +219,7 @@ public class pokedex extends AppCompatActivity {
 
         //add row
         header_table.addView(row);
-        //table.addView(row);
 
-        //add pokemon entries
-        for(int i=0;i<pokemon.length();i++){
-            row = new TableRow(this);
-            row.setId(View.generateViewId());
-            row.setBackgroundColor(Color.BLACK);
-            row.setLayoutParams(new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
-            profile = new ImageView(this);
-            profile.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-            profile.setId(View.generateViewId());
-            profile.setPadding(5,5,5,5);
-            profile.setImageResource(R.mipmap.ic_launcher);
-
-            addView(row, Integer.toString(i+1));
-            row.addView(profile);
-
-            try{
-                //add name
-                addView(row,  pokemon.getJSONObject(i).getString("name"));
-                //add type1/type2
-                types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
-                        0).getJSONArray("types");
-                typeString = "";
-                for(int g=0;g<types.length();g++){
-                    //build the string for types
-                    typeString = typeString + types.getString(g);
-                    if(g<types.length()-1){
-                        typeString = typeString + " / ";
-                    }
-                }
-                addView(row, typeString);
-                //add stats
-                statString = "";
-                stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
-                        0);
-
-                pokestat = new int[6];
-                pokestat[0] = stats.getInt("hp");
-                pokestat[1] = stats.getInt("atk");
-                pokestat[2] = stats.getInt("def");
-                pokestat[3] = stats.getInt("spa");
-                pokestat[4] = stats.getInt("spd");
-                pokestat[5] = stats.getInt("spe");
-                statString = (Integer.toString(pokestat[0])+" | ");//get hp
-                statString = statString + (Integer.toString(pokestat[1])+" | ");//get atk
-                statString = statString + (Integer.toString(pokestat[2])+" | ");//get def
-                statString = statString + (Integer.toString(pokestat[3])+" | ");//get spa
-                statString = statString + (Integer.toString(pokestat[4])+" | ");//get spd
-                statString = statString + (Integer.toString(pokestat[5]));//get spe
-                addView(row, statString);
-
-
-            }catch (JSONException e){
-                e.printStackTrace();
-            }
-            row.setPadding(5,5,5,5);
-
-            //setup for onclick view
-            row.setOnClickListener(new View.OnClickListener(){
-                //TableRow is calling onClick()
-                public void onClick(View v){
-                    TableRow littlerow = (TableRow) v;
-                    TextView text = (TextView) littlerow.getChildAt(2);
-                    TextView number = (TextView) littlerow.getChildAt(0);
-                    //Get original index for pokedex
-                    int index = Integer.parseInt(number.getText().toString()) - 1;
-                    Intent intent = new Intent(pokedex.this, pokearticle.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("index", index);
-                    bundle.putString("gen", generation);
-                    Log.i("tablerow",number.getText().toString()+
-                            text.getText().toString());
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
-            });
-
-            //add rowstat to arraylist
-            rowstat = new RowStats(row, pokestat);
-            myList.add(rowstat);
-            table.addView(row);
-
-
-        }
 
     }
 
