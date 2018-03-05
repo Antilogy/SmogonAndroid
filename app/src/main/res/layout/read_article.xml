@@ -15,10 +15,21 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="28sp"
+        android:layout_height="35sp"
         android:background="?attr/colorPrimary"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+
+        <Button
+            android:id="@+id/copy"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/ClipBoard"
+            android:layout_gravity="center"
+            android:textSize="@dimen/SmallText"
+            />
+    </android.support.v7.widget.Toolbar>
+
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_strategy"

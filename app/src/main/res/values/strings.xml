@@ -35,4 +35,5 @@
     <string name="Ability">Ability</string>
     <string name="pokedex_activity">Pokedex \nSearch Pokemon and read analyses articles!</string>
     <string name="title_selection">Select Your Function!</string>
+    <string name="ClipBoard">Copy to ClipBoard</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.example.spielberg.smogonandroid;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,8 +19,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,7 +58,36 @@ public class readArticle extends AppCompatActivity {
         this.pokemon = bundle.getString("pokemon");
         this.gen = bundle.getString("gen");
         this.format = bundle.getString("format");
+        Button button = (Button) findViewById(R.id.copy);
+        button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                CopyToClipBoard();
+            }
+        });
         setupArticle();
+
+
+    }
+
+    /**
+     * Copies current moveset to clipboard with pokemon name
+     */
+    public void CopyToClipBoard(){
+        TabLayout tabs = (TabLayout) findViewById(R.id.tab_strategy);
+        ReadTab current = (ReadTab) getSupportFragmentManager().getFragments(
+        ).get(tabs.getSelectedTabPosition());
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        String text = current.getClipboard();
+
+        ViewPagerAdapter adapter = ((ViewPagerAdapter) viewpager.getAdapter());
+        current = (ReadTab) adapter.getItem(tabs.getSelectedTabPosition());
+        text = current.getClipboard();
+
+        ClipData clip = ClipData.newPlainText("text", text);
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(getApplicationContext(),
+                "Copied Moveset: "+pokemon, Toast.LENGTH_SHORT).show();
 
 
     }
