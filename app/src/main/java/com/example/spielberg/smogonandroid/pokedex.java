@@ -168,6 +168,10 @@ public class pokedex extends AppCompatActivity {
 
     }
 
+    /**
+     * Function to refresh table
+     * @param id
+     */
     private void refreshTable(int id){
         if(threadcount == 2){
             table.removeAllViews();
@@ -189,16 +193,9 @@ public class pokedex extends AppCompatActivity {
     private void addpokemon(JSONArray pokemon) {
         table = (TableLayout) findViewById(R.id.pokemon_results);
         TableLayout header_table = (TableLayout) findViewById(R.id.pokemon_header_row);
-        TableRow.LayoutParams params;
         table.removeAllViews();
         header_table.removeAllViews();
         TableRow row;
-        JSONArray types;
-        JSONObject stats;
-        String typeString, statString;
-        ImageView profile;
-        RowStats rowstat;
-        int[] pokestat = new int[6];
         //add header row
         row = new TableRow(this);
         row.setId(View.generateViewId());
