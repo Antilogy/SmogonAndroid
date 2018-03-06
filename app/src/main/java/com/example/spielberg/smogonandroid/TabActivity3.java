@@ -37,7 +37,14 @@ public class TabActivity3 extends Fragment {
         try{
             Bundle bundle = getArguments();
             if(strategy==null){
-                strategy = new JSONArray(bundle.getString("movesets"));
+                String testString = bundle.getString("movesets");
+                if(testString.length() >0){
+                    strategy = new JSONArray(testString);
+                }
+                else{
+                    strategy = new JSONArray();
+                }
+
             }
             pokemon = bundle.getString("pokemon");
             gen = bundle.getString("gen");

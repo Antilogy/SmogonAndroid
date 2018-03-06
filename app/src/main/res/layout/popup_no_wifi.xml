@@ -9,9 +9,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="30dp"
-        android:textSize="@dimen/LargeText"
-        android:text="@string/Success"
+        android:layout_margin="20sp"
+        android:textSize="@dimen/MediumText"
+        android:text="@string/No_Wifi"
         android:textColor="@color/white"/>
 
 </RelativeLayout>

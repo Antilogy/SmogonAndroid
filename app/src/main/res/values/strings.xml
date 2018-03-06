@@ -36,4 +36,11 @@
     <string name="pokedex_activity">Pokedex \nSearch Pokemon and read analyses articles!</string>
     <string name="title_selection">Select Your Function!</string>
     <string name="ClipBoard">Copy to ClipBoard</string>
+    <string name="No_Wifi">Failure! \nThere is no Internet Access.
+        \nMake sure:\n
+        1. You are not in airplane mode.\n
+        2. Your phone\'s/tablet\'s wifi is turned on.\n
+        3. Your router/modem is working correctly.\n
+        After that try again.
+    </string>
 </resources>

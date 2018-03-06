@@ -158,12 +158,38 @@ public class ServerSmogon implements Runnable {
                          break;
                     }
                 }
+                //file was empty, update anyway
+                else{
+                    stream = new FileOutputStream(temp);
+                    try{
+                        stream.write(jsonArray.toString().getBytes());
+                        //delete old file
+                        if(!f.delete()){
+                            //couldn't delete file
+                        }
+
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    } finally{
+                        stream.close();
+                    }
+                    temp.renameTo(f);
+                    //tell the handler the update was a success
+                    completeMessage = mHandler.obtainMessage(1, "Update Success!");
+                    completeMessage.sendToTarget();
+                    break;
+                }
 
                 //first check if there are new formats
 
             }
 
         } catch (IOException | JSONException  e ) {
+            completeMessage = mHandler.obtainMessage(2,
+                    "There is no Internet Connection");
+            completeMessage.sendToTarget();
+
+            //what if there is no space to update article
             e.printStackTrace();
         } finally{
             if(urlConnection != null){

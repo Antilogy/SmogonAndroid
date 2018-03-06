@@ -85,6 +85,12 @@ public class pokearticle extends AppCompatActivity {
                         refreshLayout();
                         break;
 
+
+                    case 2:
+                        //no internet connection
+                        setupPopWindow(message.what);
+                        break;
+
                     default:
                         break;
                 }
@@ -105,7 +111,68 @@ public class pokearticle extends AppCompatActivity {
      * Refresh contents of this layout
      */
     public void refreshLayout(){
-        callSmogon();
+        JSONObject obj;
+        JSONArray pokedex;
+        Thread thread;
+        TextView stats,overview, article;
+        Boolean directory;
+
+
+        File f = new File(getFilesDir() +
+                "/pokedex/" + gen+".txt");
+        try{
+            Scanner scan = new Scanner(f,"UTF-8").useDelimiter("/n");
+            if(scan.hasNext()){
+                obj = new JSONObject(scan.nextLine());
+                pokedex = obj.getJSONArray("pokemon");
+                setupDirectory(pokedex.getJSONObject(index).getString("name"));
+
+            }
+        } catch(FileNotFoundException | JSONException e){
+            e.printStackTrace();
+        }
+
+
+        tablayout2 = (TabLayout) findViewById(R.id.format);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        setupFormat(tablayout2);
+        //update the overview and article tabs; tab2 and tab3 respectively
+        updateTabs();
+        //end of updating tabs
+
+
+
+    }
+
+
+    public void updateTabs(){
+        TabLayout.Tab tab = tablayout2.getTabAt(0);
+        String format = tab.getText().toString();
+        String overviewString;
+        JSONArray move;
+        //change contents of overview and articles
+        //based on tab selected
+        try {
+            overviewString = strtgy_art.getJSONObject(tab.getPosition()
+            ).getString("overview");
+            if(overviewString == null){
+                //this is a sample analyses
+                tab2.newOverview("This is a sample analyses.");
+                return;
+            }
+            //otherwise use the given overview and comments
+            overviewString = overviewString.concat(strtgy_art.getJSONObject(
+                    0).getString("comments"));
+            tab2.newOverview(overviewString);
+
+            move = strtgy_art.getJSONObject(tab.getPosition()
+            ).getJSONArray("movesets");
+            tab3.newMoveset(move.toString(), format);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     public void callSmogon(){
         JSONObject obj;
@@ -138,6 +205,7 @@ public class pokearticle extends AppCompatActivity {
         tablayout2 = (TabLayout) findViewById(R.id.format);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.removeAllTabs();
         tabLayout.setupWithViewPager(viewPager);
 
 
@@ -174,7 +242,11 @@ public class pokearticle extends AppCompatActivity {
     private void setupFormat(TabLayout tablayout2) {
         String format;
         TabLayout.Tab format_tab;
-        int length = strtgy_art.length();
+        int length = 0;
+        if(strtgy_art != null){
+            length = strtgy_art.length();
+        }
+
         tablayout2.removeAllTabs();
         if(length >0){
             for(int j=0;j<length;j++){
@@ -198,7 +270,8 @@ public class pokearticle extends AppCompatActivity {
                     //change contents of overview and articles
                     //based on tab selected
                     try {
-                        overview = strtgy_art.getJSONObject(tab.getPosition()).getString("overview");
+                        overview = strtgy_art.getJSONObject(tab.getPosition()
+                        ).getString("overview");
                         if(overview == null){
                             //this is a sample analyses
                             tab2.newOverview("This is a sample analyses.");
@@ -209,7 +282,8 @@ public class pokearticle extends AppCompatActivity {
                                 0).getString("comments"));
                         tab2.newOverview(overview);
 
-                        move = strtgy_art.getJSONObject(tab.getPosition()).getJSONArray("movesets");
+                        move = strtgy_art.getJSONObject(tab.getPosition()
+                        ).getJSONArray("movesets");
                         tab3.newMoveset(move.toString(), format);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -236,6 +310,7 @@ public class pokearticle extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewpager){
+        viewpager.removeAllViews();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         tab1 = new TabActivity1();
         tab2 = new TabActivity2();
@@ -257,7 +332,12 @@ public class pokearticle extends AppCompatActivity {
     }
     private void setupTab2(){
         String over;
-        if(strtgy_art.length()==0){
+        if(strtgy_art == null){
+            //the article was not downloaded
+            tab2 = TabActivity2.newInstance("There is no analyses. \n" +
+                    "Try connecting to the internet and try again.");
+        }
+        else if(strtgy_art.length()==0){
             tab2 = TabActivity2.newInstance("There is no analyses");
         }
         else{
@@ -279,7 +359,12 @@ public class pokearticle extends AppCompatActivity {
     }
     private void setupTab3(){
         JSONArray moveset;
-        if(strtgy_art.length()==0){
+
+        if(strtgy_art == null){
+            //could not download article
+            tab3 = TabActivity3.newInstance("", pokemon, gen, "no format");
+        }
+        else if(strtgy_art.length()==0){
             tab3 = TabActivity3.newInstance(strtgy_art.toString(), pokemon, gen, "no format");
         }
         else{
@@ -434,14 +519,17 @@ public class pokearticle extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_checkarticles, null);
         //choose the popup window to use
-        if(status>0){
+        if(status==1){
             //success with update
             popupView = inflater.inflate(R.layout.popup_success_update, null);
+        }
+        else if(status==2){
+            popupView = inflater.inflate(R.layout.popup_no_wifi, null);
         }
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = (mainLayout.getWidth()/4)*3;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
 
