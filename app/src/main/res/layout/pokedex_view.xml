@@ -22,10 +22,10 @@
         <TableLayout
             android:id="@+id/pokemon_header_row"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="2,3,4">
+            android:layout_height="wrap_content">
         </TableLayout>
         <!--</ScrollView>-->
+        <!--android:stretchColumns="2,3,4"-->
         <ScrollView
             android:id="@+id/scrollPokemon"
             android:layout_width="match_parent"
@@ -33,8 +33,7 @@
         <TableLayout
             android:id="@+id/pokemon_results"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="2,3,4">
+            android:layout_height="wrap_content">
 
             <TableRow
                 android:layout_width="match_parent"

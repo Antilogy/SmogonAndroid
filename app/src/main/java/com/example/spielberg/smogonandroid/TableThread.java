@@ -68,25 +68,31 @@ public class TableThread implements Runnable {
         JSONObject stats;
         JSONArray types;
         RowStats rowstat;
+        TableRow.LayoutParams imageparams;
         for(int i=range[0];i<range[1];i++){
             row = new TableRow(context);
             row.setId(View.generateViewId());
             row.setBackgroundColor(Color.BLACK);
             row.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
+            row.setWeightSum(1f);
             profile = new ImageView(context);
             profile.setLayoutParams(new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                    0, TableRow.LayoutParams.WRAP_CONTENT));
+            imageparams = (TableRow.LayoutParams)profile.getLayoutParams();
             profile.setId(View.generateViewId());
             profile.setPadding(5,5,5,5);
             profile.setImageResource(R.mipmap.ic_launcher);
+            imageparams.weight = 0.08f;
+            profile.setLayoutParams(imageparams);
+            profile.setAdjustViewBounds(true);
 
-            addView(row, Integer.toString(i+1));
+            addView(row, Integer.toString(i+1), 0.06f);
             row.addView(profile);
 
             try{
                 //add name
-                addView(row,  pokemon.getJSONObject(i).getString("name"));
+                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.20f);
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0).getJSONArray("types");
@@ -98,7 +104,7 @@ public class TableThread implements Runnable {
                         typeString = typeString + " / ";
                     }
                 }
-                addView(row, typeString);
+                addView(row, typeString, 0.30f);
                 //add stats
                 statString = "";
                 stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
@@ -111,13 +117,19 @@ public class TableThread implements Runnable {
                 pokestat[3] = stats.getInt("spa");
                 pokestat[4] = stats.getInt("spd");
                 pokestat[5] = stats.getInt("spe");
-                statString = (Integer.toString(pokestat[0])+" | ");//get hp
-                statString = statString + (Integer.toString(pokestat[1])+" | ");//get atk
-                statString = statString + (Integer.toString(pokestat[2])+" | ");//get def
-                statString = statString + (Integer.toString(pokestat[3])+" | ");//get spa
-                statString = statString + (Integer.toString(pokestat[4])+" | ");//get spd
+                statString = (Integer.toString(pokestat[0])+" \u0009\u0009");//get hp
+//                addView(row, Integer.toString(pokestat[0]), 0.06f);
+//                addView(row, Integer.toString(pokestat[1]), 0.06f);
+//                addView(row, Integer.toString(pokestat[2]), 0.06f);
+//                addView(row, Integer.toString(pokestat[3]), 0.06f);
+//                addView(row, Integer.toString(pokestat[4]), 0.06f);
+//                addView(row, Integer.toString(pokestat[5]), 0.06f);
+                statString = statString + (Integer.toString(pokestat[1])+" \u0009 ");//get atk
+                statString = statString + (Integer.toString(pokestat[2])+" \u0009 ");//get def
+                statString = statString + (Integer.toString(pokestat[3])+" \u0009 ");//get spa
+                statString = statString + (Integer.toString(pokestat[4])+" \u0009 ");//get spd
                 statString = statString + (Integer.toString(pokestat[5]));//get spe
-                addView(row, statString);
+                addView(row, statString, 0.36f);
 
 
             }catch (JSONException e){
@@ -157,15 +169,16 @@ public class TableThread implements Runnable {
      * generic addview function for tablerow.
      * Adds a textview with name to a tablerow.
      */
-    private void addView(TableRow row, CharSequence name){
+    private void addView(TableRow row, CharSequence name, float weight){
         TextView tx;
         //add pic column
         tx = new TextView(context);
         tx.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                0, TableRow.LayoutParams.WRAP_CONTENT));
 
         TableRow.LayoutParams params = (TableRow.LayoutParams)tx.getLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL;
+        params.weight = weight;
         tx.setLayoutParams(params);
         tx.setText(name);
 

@@ -202,12 +202,19 @@ public class pokedex extends AppCompatActivity {
         row.setBackgroundColor(Color.GRAY);
         row.setLayoutParams(new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
+        row.setWeightSum(1f);
 
-        addView(row,getText(R.string.number));//add index
-        addView(row,"pic");//add pic column
-        addView(row,"Name");//add name column
-        addView(row,getText(R.string.type));//add type column
-        addView(row,getText(R.string.stats));//add stats column
+        addView(row,getText(R.string.number), 0.06f);//add index
+        addView(row,"pic", 0.08f);//add pic column
+        addView(row,"Name", 0.20f);//add name column
+        addView(row,getText(R.string.type), 0.30f);//add type column
+        //addView(row,getText(R.string.stats));//add stats column
+        addView(row, "HP", 0.060f);
+        addView(row, "ATK",0.060f);
+        addView(row, "DEF",0.060f);
+        addView(row, "SPA",0.060f);
+        addView(row, "SPD",0.060f);
+        addView(row, "SPE",0.060f);
 
         row.setPadding(5,5,5,5);
         row.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -225,15 +232,16 @@ public class pokedex extends AppCompatActivity {
      * generic addview function for tablerow.
      * Adds a textview with name to a tablerow.
      */
-    private void addView(TableRow row, CharSequence name){
+    private void addView(TableRow row, CharSequence name, float weight){
         TextView tx;
         //add pic column
         tx = new TextView(this);
         tx.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                0, TableRow.LayoutParams.WRAP_CONTENT));
 
         TableRow.LayoutParams params = (TableRow.LayoutParams)tx.getLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL;
+        params.weight = weight;
         tx.setLayoutParams(params);
         tx.setText(name);
 
@@ -241,6 +249,7 @@ public class pokedex extends AppCompatActivity {
 
         tx.setTextColor(Color.WHITE);
         tx.setPadding(5,5,5,5);
+
 
         row.addView(tx);
     }
