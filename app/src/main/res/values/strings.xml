@@ -16,7 +16,7 @@
     <string name="Warning">Warning! \nArticles are already up-to-date.</string>
     <string name="Success">Success! \nStrategies for this pokemon were updated!</string>
     <string name="search">Search Pokemon</string>
-    <string name="stats">HP \u007C ATK \u007C DEF \u007C SPA \u007C SPD \u007C SPE</string>
+    <string name="stats">HP\u0020\u0020ATK\u0020DEF\u0020SPA\u0020SPD\u0020SPE</string>
     <string name="type">Type1 \u002F Type2</string>
     <string name="number">\u0023</string>
     <string name="update">update</string>

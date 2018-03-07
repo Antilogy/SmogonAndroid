@@ -28,17 +28,18 @@ import java.util.ArrayList;
 
 public class TableThread implements Runnable {
     Handler hand;
-    Context context;
+    //Context context;
+    pokedex poke_view;
     int[] range;
     ArrayList<RowStats> result_rows;
     JSONArray pokemon;
     int threadID;
     String gen;
 
-    public TableThread(Handler handler, Context context,
+    public TableThread(Handler handler, pokedex view,
                        int start, int end, JSONArray pokemon, int id, String gen){
         hand = handler;
-        this.context = context;
+        poke_view = view;
         this.range = new int[2];
         range[0] = start;
         range[1] = end;
@@ -46,6 +47,7 @@ public class TableThread implements Runnable {
         threadID = id;
         this.gen = gen;
         result_rows = new ArrayList<>();
+
     }
 
     @Override
@@ -71,13 +73,13 @@ public class TableThread implements Runnable {
         RowStats rowstat;
         TableRow.LayoutParams imageparams;
         for(int i=range[0];i<range[1];i++){
-            row = new TableRow(context);
+            row = new TableRow(poke_view);
             row.setId(i);
             row.setBackgroundColor(Color.BLACK);
             row.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
             row.setWeightSum(1f);
-            profile = new ImageView(context);
+            profile = new ImageView(poke_view);
             profile.setLayoutParams(new TableRow.LayoutParams(
                     0, TableRow.LayoutParams.WRAP_CONTENT));
             imageparams = (TableRow.LayoutParams)profile.getLayoutParams();
@@ -143,19 +145,18 @@ public class TableThread implements Runnable {
                 //TableRow is calling onClick()
                 public void onClick(View v){
                     TableRow littlerow = (TableRow) v;
-                    TextView text = (TextView) littlerow.getChildAt(1);
                     //TextView number = (TextView) littlerow.getChildAt(0);
                     //Get original index for pokedex
                     int index;
                     index = littlerow.getId();
-                    Intent intent = new Intent(context, pokearticle.class);
+                    Intent intent = new Intent(poke_view, pokearticle.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("index", index);
                     bundle.putString("gen", gen);
 //                    Log.i("tablerow",number.getText().toString()+
 //                            text.getText().toString());
                     intent.putExtras(bundle);
-                    context.startActivity(intent);
+                    poke_view.startActivity(intent);
                 }
             });
 
@@ -174,15 +175,20 @@ public class TableThread implements Runnable {
     private void addView(TableRow row, CharSequence name, float weight){
         TextView tx;
         //add pic column
-        tx = new TextView(context);
+        tx = new TextView(poke_view);
         tx.setLayoutParams(new TableRow.LayoutParams(
                 0, TableRow.LayoutParams.WRAP_CONTENT));
 
         TableRow.LayoutParams params = (TableRow.LayoutParams)tx.getLayoutParams();
         params.gravity = Gravity.CENTER_VERTICAL;
         params.weight = weight;
+
         tx.setLayoutParams(params);
         tx.setText(name);
+        //set textsize depending on screen resolution 720, 1080, 1440
+
+
+        tx.setTextSize(poke_view.getResources().getDimension(poke_view.width));
         tx.setTypeface(Typeface.MONOSPACE);
 
         //tx.setId(View.generateViewId());

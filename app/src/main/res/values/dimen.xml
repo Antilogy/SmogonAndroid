@@ -4,4 +4,9 @@
     <dimen name="LargeText">22sp</dimen>
     <dimen name="MediumText">18sp</dimen>
     <dimen name="SmallText">14sp</dimen>
+    <dimen name="SmallerText">10sp</dimen>
+    <dimen name="SmallestText">7sp</dimen>
+    <dimen name="TinyText">6sp</dimen>
+    <dimen name="MicroText">5sp</dimen>
+    <dimen name="NanoText">4sp</dimen>
 </resources>

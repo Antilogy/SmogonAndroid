@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,6 +58,7 @@ public class pokedex extends AppCompatActivity {
     String generation;
     private Button search;
     private SearchSettings settings;
+    int width;
     Switch switcher[];
     JSONArray types, abilities, pokemon;
     List<String> typeList, abilityList, type2List;
@@ -96,7 +98,25 @@ public class pokedex extends AppCompatActivity {
     }
 
     private void populate_pokedex(String gen) {
-
+        //setup width
+        int screen_width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        Log.i("width "+screen_width, "hello");
+        if(screen_width<=1080){
+            width = R.dimen.NanoText;
+        }
+        else if(screen_width<=1280){
+            width = R.dimen.SmallestText;
+        }
+        else if(screen_width<=1440){
+            width = R.dimen.TinyText;
+        }
+        else if(screen_width<=1920){
+            width = R.dimen.TinyText;
+        }
+        else{
+            //screen is really wide
+            width = R.dimen.SmallestText;
+        }
         generation = gen;
         handler = new Handler(Looper.getMainLooper()){
             @Override
@@ -148,9 +168,9 @@ public class pokedex extends AppCompatActivity {
                 }
                 addpokemon(pokemon);
                 //test threadrows
-                TableThread table1 = new TableThread(handler, getBaseContext(), 0,
+                TableThread table1 = new TableThread(handler, this, 0,
                         pokemon.length()/2, pokemon, 0, generation);
-                TableThread table2 = new TableThread(handler, getBaseContext(), pokemon.length()/2,
+                TableThread table2 = new TableThread(handler, this, pokemon.length()/2,
                         (pokemon.length()/2)*2 +pokemon.length()%2, pokemon, 1, generation);
 
                 Thread thread = new Thread(table1);
@@ -173,6 +193,8 @@ public class pokedex extends AppCompatActivity {
      * @param id
      */
     private void refreshTable(int id){
+        String type = new String();
+        String name = new String();
         if(threadcount == 2){
             table.removeAllViews();
             for(int i=0; i<result_list.length;i++){
@@ -181,7 +203,18 @@ public class pokedex extends AppCompatActivity {
             }
             for(int i=0;i<myList.size();i++){
                 table.addView(myList.get(i).row);
+                String sample = ((TextView)myList.get(i).row.getChildAt(2)).getText().toString();
+                if(sample.length()>type.length()){
+                    type = sample;
+                }
+                sample = ((TextView)myList.get(i).row.getChildAt(1)).getText().toString();
+                if(sample.length()>name.length()){
+                    name = sample;
+                }
             }
+            //print name and type
+            Log.i("name %d"+name.length(), name);
+            Log.i("type %d"+type.length(), type);
             threadcount = 0;
             dialog.dismiss();
 
@@ -209,12 +242,12 @@ public class pokedex extends AppCompatActivity {
         addView(row,"Name", 0.28f);//add name column
         addView(row,getText(R.string.type), 0.28f);//add type column
         //addView(row,getText(R.string.stats));//add stats column
-        addView(row, "HP", 0.060f);
-        addView(row, "ATK",0.060f);
-        addView(row, "DEF",0.060f);
-        addView(row, "SPA",0.060f);
-        addView(row, "SPD",0.060f);
-        addView(row, "SPE",0.060f);
+        addView(row, getResources().getString(R.string.stats), 0.360f);
+//        addView(row, "ATK",0.060f);
+//        addView(row, "DEF",0.060f);
+//        addView(row, "SPA",0.060f);
+//        addView(row, "SPD",0.060f);
+//        addView(row, "SPE",0.060f);
 
         row.setPadding(5,5,5,5);
         row.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -245,6 +278,9 @@ public class pokedex extends AppCompatActivity {
         tx.setLayoutParams(params);
         tx.setText(name);
 
+        //set text size
+        tx.setTextSize(getResources().getDimension(width));
+        tx.setTypeface(Typeface.MONOSPACE);
         tx.setId(View.generateViewId());
 
         tx.setTextColor(Color.WHITE);

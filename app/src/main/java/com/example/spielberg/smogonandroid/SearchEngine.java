@@ -127,8 +127,8 @@ public class SearchEngine implements Runnable {
 
 
     private void applyAbility(TableRow row, int rowindex) {
-        String text =((TextView) row.getChildAt(0)).getText().toString();
-        int index = Integer.parseInt(text)-1;
+        //String text =((TextView) row.getChildAt(0)).getText().toString();
+        int index = row.getId();
         JSONArray abilitylist;
         String mytype;
         //only apply visible if type1 is an actual type
@@ -157,7 +157,7 @@ public class SearchEngine implements Runnable {
     }
 
     private void applyType2(TableRow row, int rowindex) {
-        String type =((TextView) row.getChildAt(3)).getText().toString();
+        String type =((TextView) row.getChildAt(2)).getText().toString();
         //only apply visible if type1 is an actual type
         if(!(settings.getType2().compareTo("Type2")==0)){
             if(!type.contains(settings.getType2())){
@@ -167,7 +167,7 @@ public class SearchEngine implements Runnable {
     }
 
     private void applyType1(TableRow row, int rowindex) {
-        String type =((TextView) row.getChildAt(3)).getText().toString();
+        String type =((TextView) row.getChildAt(2)).getText().toString();
         //only apply visible if type1 is an actual type
         if(!(settings.getType1().compareTo("Type1")==0)){
             if(!type.contains(settings.getType1())){
@@ -177,7 +177,7 @@ public class SearchEngine implements Runnable {
     }
 
     public void applyName(TableRow row, int rowindex){
-        String name =((TextView) row.getChildAt(2)).getText().toString();
+        String name =((TextView) row.getChildAt(1)).getText().toString();
         if(settings.getPokemon()==""){
             settings.setView(rowindex, View.VISIBLE);
         }
@@ -187,5 +187,27 @@ public class SearchEngine implements Runnable {
         else if(name.toLowerCase().contains(settings.getPokemon())){
             settings.setView(rowindex, View.VISIBLE);
         }
+    }
+
+    /**
+     * Split name from long string
+     */
+    public String getString(TableRow row, int split){
+        String text = ((TextView )row.getChildAt(1)).getText().toString();
+
+        switch(split){
+            //return the name
+            case 0:
+                text = text.substring(0, 17);
+
+                break;
+            //return the type
+            case 1:
+                break;
+
+            default:
+                break;
+        }
+        return text;
     }
 }
