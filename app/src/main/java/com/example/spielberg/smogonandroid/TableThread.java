@@ -3,6 +3,7 @@ package com.example.spielberg.smogonandroid;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -92,7 +93,7 @@ public class TableThread implements Runnable {
 
             try{
                 //add name
-                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.20f);
+                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.22f);
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0).getJSONArray("types");
@@ -104,7 +105,7 @@ public class TableThread implements Runnable {
                         typeString = typeString + " / ";
                     }
                 }
-                addView(row, typeString, 0.30f);
+                addView(row, typeString, 0.28f);
                 //add stats
                 statString = "";
                 stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
@@ -117,18 +118,18 @@ public class TableThread implements Runnable {
                 pokestat[3] = stats.getInt("spa");
                 pokestat[4] = stats.getInt("spd");
                 pokestat[5] = stats.getInt("spe");
-                statString = (Integer.toString(pokestat[0])+" \u0009\u0009");//get hp
+                statString = (String.format("%-4d",pokestat[0]));//get hp
 //                addView(row, Integer.toString(pokestat[0]), 0.06f);
 //                addView(row, Integer.toString(pokestat[1]), 0.06f);
 //                addView(row, Integer.toString(pokestat[2]), 0.06f);
 //                addView(row, Integer.toString(pokestat[3]), 0.06f);
 //                addView(row, Integer.toString(pokestat[4]), 0.06f);
 //                addView(row, Integer.toString(pokestat[5]), 0.06f);
-                statString = statString + (Integer.toString(pokestat[1])+" \u0009 ");//get atk
-                statString = statString + (Integer.toString(pokestat[2])+" \u0009 ");//get def
-                statString = statString + (Integer.toString(pokestat[3])+" \u0009 ");//get spa
-                statString = statString + (Integer.toString(pokestat[4])+" \u0009 ");//get spd
-                statString = statString + (Integer.toString(pokestat[5]));//get spe
+                statString = statString + (String.format("%-4d",pokestat[1]));//get atk
+                statString = statString + (String.format("%-4d",pokestat[2]));//get def
+                statString = statString + (String.format("%-4d",pokestat[3]));//get spa
+                statString = statString + (String.format("%-4d",pokestat[4]));//get spd
+                statString = statString + (String.format("%-4d",pokestat[5]));//get spe
                 addView(row, statString, 0.36f);
 
 
@@ -181,6 +182,7 @@ public class TableThread implements Runnable {
         params.weight = weight;
         tx.setLayoutParams(params);
         tx.setText(name);
+        tx.setTypeface(Typeface.MONOSPACE);
 
         tx.setId(View.generateViewId());
 
