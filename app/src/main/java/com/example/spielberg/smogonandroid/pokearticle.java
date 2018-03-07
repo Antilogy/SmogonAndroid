@@ -200,7 +200,7 @@ public class pokearticle extends AppCompatActivity {
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tablayout2 = (TabLayout) findViewById(R.id.format);
         setupViewPager(viewPager);
