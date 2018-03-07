@@ -72,7 +72,7 @@ public class TableThread implements Runnable {
         TableRow.LayoutParams imageparams;
         for(int i=range[0];i<range[1];i++){
             row = new TableRow(context);
-            row.setId(View.generateViewId());
+            row.setId(i);
             row.setBackgroundColor(Color.BLACK);
             row.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
@@ -88,12 +88,12 @@ public class TableThread implements Runnable {
             profile.setLayoutParams(imageparams);
             profile.setAdjustViewBounds(true);
 
-            addView(row, Integer.toString(i+1), 0.06f);
+//            addView(row, Integer.toString(i+1), 0.06f);
             row.addView(profile);
 
             try{
                 //add name
-                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.22f);
+                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.28f);
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0).getJSONArray("types");
@@ -143,10 +143,11 @@ public class TableThread implements Runnable {
                 //TableRow is calling onClick()
                 public void onClick(View v){
                     TableRow littlerow = (TableRow) v;
-                    TextView text = (TextView) littlerow.getChildAt(2);
-                    TextView number = (TextView) littlerow.getChildAt(0);
+                    TextView text = (TextView) littlerow.getChildAt(1);
+                    //TextView number = (TextView) littlerow.getChildAt(0);
                     //Get original index for pokedex
-                    int index = Integer.parseInt(number.getText().toString()) - 1;
+                    int index;
+                    index = littlerow.getId();
                     Intent intent = new Intent(context, pokearticle.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("index", index);
@@ -184,7 +185,7 @@ public class TableThread implements Runnable {
         tx.setText(name);
         tx.setTypeface(Typeface.MONOSPACE);
 
-        tx.setId(View.generateViewId());
+        //tx.setId(View.generateViewId());
 
         tx.setTextColor(Color.WHITE);
         tx.setPadding(5,5,5,5);
