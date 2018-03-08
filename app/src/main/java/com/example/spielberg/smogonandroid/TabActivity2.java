@@ -24,7 +24,9 @@ public class TabActivity2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overview = getArguments().getString("text", "no text");
+        if(overview==null){
+            overview = getArguments().getString("text", "no text");
+        }
 
     }
 

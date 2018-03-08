@@ -68,6 +68,14 @@ public class pokearticle extends AppCompatActivity {
         this.gen = bundle.getString("gen");
         setContentView(R.layout.pokearticle);
         this.index = bundle.getInt("index");
+        if(savedInstanceState != null){
+            //restore tabs
+            List<Fragment> fraglist = getSupportFragmentManager().getFragments();
+            tab1 = (TabActivity1) fraglist.get(0);
+            tab2 = (TabActivity2) fraglist.get(1);
+            FragmentManager fm = getSupportFragmentManager();
+            tab3 = (TabActivity3) fraglist.get(2);
+        }
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message message){
@@ -106,6 +114,8 @@ public class pokearticle extends AppCompatActivity {
 
 
     }
+
+
 
     /**
      * Refresh contents of this layout
@@ -205,7 +215,7 @@ public class pokearticle extends AppCompatActivity {
         tablayout2 = (TabLayout) findViewById(R.id.format);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.removeAllTabs();
+//        tabLayout.removeAllTabs();
         tabLayout.setupWithViewPager(viewPager);
 
 
@@ -310,20 +320,31 @@ public class pokearticle extends AppCompatActivity {
     }
 
     private void setupViewPager(ViewPager viewpager){
-        viewpager.removeAllViews();
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        tab1 = new TabActivity1();
-        tab2 = new TabActivity2();
-        tab3 = new TabActivity3();
+//        Log.i("tabs "+viewpager.getChildCount(), "yes");
+//        viewpager.removeAllViews();
+        pokearticle.ViewPagerAdapter adapter = new pokearticle.ViewPagerAdapter(
+                getSupportFragmentManager());
+        if(tab2 == null && tab3 == null){
+            tab1 = new TabActivity1();
+            tab2 = new TabActivity2();
+            tab3 = new TabActivity3();
 
-        setupTab1();
-        setupTab2();
-        setupTab3();
+            setupTab1();
+            setupTab2();
+            setupTab3();
 
-        adapter.addFragment(tab1, "Stats");
-        adapter.addFragment(tab2, "Overview");
-        adapter.addFragment(tab3, "Articles");
-        viewPager.setAdapter(adapter);
+            adapter.addFragment(tab1, "Stats");
+            adapter.addFragment(tab2, "Overview");
+            adapter.addFragment(tab3, "Articles");
+        }
+        else{
+
+            adapter.addFragment(tab1, "Stats");
+            adapter.addFragment(tab2, "Overview");
+            adapter.addFragment(tab3, "Articles");
+        }
+
+        viewpager.setAdapter(adapter);
     }
 
     private void setupTab1() {
@@ -406,6 +427,8 @@ public class pokearticle extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+
+
     }
 
     public void setupArticleandStats(){
