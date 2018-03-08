@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
+import android.support.v7.widget.ThemedSpinnerAdapter;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Spielberg on 3/4/2018.
@@ -35,6 +38,7 @@ public class TableThread implements Runnable {
     JSONArray pokemon;
     int threadID;
     String gen;
+    HelperClass help;
 
     public TableThread(Handler handler, pokedex view,
                        int start, int end, JSONArray pokemon, int id, String gen){
@@ -47,6 +51,7 @@ public class TableThread implements Runnable {
         threadID = id;
         this.gen = gen;
         result_rows = new ArrayList<>();
+        help = new HelperClass();
 
     }
 
@@ -67,6 +72,7 @@ public class TableThread implements Runnable {
         TableRow row;
         ImageView profile;
         String typeString, statString;
+        SpannableStringBuilder buildString;
         int[] pokestat = new int[6];
         JSONObject stats;
         JSONArray types;
@@ -95,21 +101,22 @@ public class TableThread implements Runnable {
 
             try{
                 //add name
-                addView(row,  pokemon.getJSONObject(i).getString("name"), 0.28f);
+                buildString = new SpannableStringBuilder();
+                buildString.append(pokemon.getJSONObject(i).getString("name"));
+                addView(row,  buildString, 0.28f);
+                buildString.clear();
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0).getJSONArray("types");
-                typeString = "";
                 for(int g=0;g<types.length();g++){
                     //build the string for types
-                    typeString = typeString + types.getString(g);
-                    if(g<types.length()-1){
-                        typeString = typeString + " / ";
+                    buildString.append(String.format("%-9s",types.getString(g)));
+                    if(types.length() == 1){
+                        buildString.append(String.format("%-9s",""));
                     }
                 }
-                addView(row, typeString, 0.28f);
+//                addView(row, typeString, 0.28f);
                 //add stats
-                statString = "";
                 stats = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0);
 
@@ -120,19 +127,16 @@ public class TableThread implements Runnable {
                 pokestat[3] = stats.getInt("spa");
                 pokestat[4] = stats.getInt("spd");
                 pokestat[5] = stats.getInt("spe");
-                statString = (String.format("%-4d",pokestat[0]));//get hp
-//                addView(row, Integer.toString(pokestat[0]), 0.06f);
-//                addView(row, Integer.toString(pokestat[1]), 0.06f);
-//                addView(row, Integer.toString(pokestat[2]), 0.06f);
-//                addView(row, Integer.toString(pokestat[3]), 0.06f);
-//                addView(row, Integer.toString(pokestat[4]), 0.06f);
-//                addView(row, Integer.toString(pokestat[5]), 0.06f);
-                statString = statString + (String.format("%-4d",pokestat[1]));//get atk
-                statString = statString + (String.format("%-4d",pokestat[2]));//get def
-                statString = statString + (String.format("%-4d",pokestat[3]));//get spa
-                statString = statString + (String.format("%-4d",pokestat[4]));//get spd
-                statString = statString + (String.format("%-4d",pokestat[5]));//get spe
-                addView(row, statString, 0.36f);
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[0]));//get hp
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[1]));//get atk
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[2]));//get def
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[3]));//get spa
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[4]));//get spd
+                buildString.append(String.format(Locale.US,"%-4d",pokestat[5]));//get spe
+
+
+                help.ColorCodeType(buildString);
+                addView(row, buildString, 0.64f);
 
 
             }catch (JSONException e){
@@ -172,7 +176,7 @@ public class TableThread implements Runnable {
      * generic addview function for tablerow.
      * Adds a textview with name to a tablerow.
      */
-    private void addView(TableRow row, CharSequence name, float weight){
+    private void addView(TableRow row, SpannableStringBuilder name, float weight){
         TextView tx;
         //add pic column
         tx = new TextView(poke_view);

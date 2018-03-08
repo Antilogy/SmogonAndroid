@@ -15,6 +15,7 @@ import android.os.Message;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -241,6 +242,7 @@ public class pokedex extends AppCompatActivity {
         TableLayout header_table = (TableLayout) findViewById(R.id.pokemon_header_row);
         table.removeAllViews();
         header_table.removeAllViews();
+        SpannableStringBuilder build= new SpannableStringBuilder();
         TableRow row;
         //add header row
         row = new TableRow(this);

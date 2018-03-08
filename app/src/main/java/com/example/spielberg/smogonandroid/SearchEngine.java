@@ -157,7 +157,9 @@ public class SearchEngine implements Runnable {
     }
 
     private void applyType2(TableRow row, int rowindex) {
-        String type =((TextView) row.getChildAt(2)).getText().toString();
+        String type = getString(row, 1);
+        //first split string
+
         //only apply visible if type1 is an actual type
         if(!(settings.getType2().compareTo("Type2")==0)){
             if(!type.contains(settings.getType2())){
@@ -167,7 +169,7 @@ public class SearchEngine implements Runnable {
     }
 
     private void applyType1(TableRow row, int rowindex) {
-        String type =((TextView) row.getChildAt(2)).getText().toString();
+        String type = getString(row, 1);
         //only apply visible if type1 is an actual type
         if(!(settings.getType1().compareTo("Type1")==0)){
             if(!type.contains(settings.getType1())){
@@ -193,7 +195,7 @@ public class SearchEngine implements Runnable {
      * Split name from long string
      */
     public String getString(TableRow row, int split){
-        String text = ((TextView )row.getChildAt(1)).getText().toString();
+        String text = ((TextView )row.getChildAt(2)).getText().toString();
 
         switch(split){
             //return the name
@@ -203,6 +205,7 @@ public class SearchEngine implements Runnable {
                 break;
             //return the type
             case 1:
+                text = text.substring(0,18);
                 break;
 
             default:
