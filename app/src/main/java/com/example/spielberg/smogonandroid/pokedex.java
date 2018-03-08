@@ -97,6 +97,16 @@ public class pokedex extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+
+        //dismiss dialog
+        if(dialog != null){
+            dialog.dismiss();
+        }
+    }
+
     private void populate_pokedex(String gen) {
         //setup width
         int screen_width = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -193,8 +203,8 @@ public class pokedex extends AppCompatActivity {
      * @param id
      */
     private void refreshTable(int id){
-        String type = new String();
-        String name = new String();
+//        String type = new String();
+//        String name = new String();
         if(threadcount == 2){
             table.removeAllViews();
             for(int i=0; i<result_list.length;i++){
@@ -203,20 +213,23 @@ public class pokedex extends AppCompatActivity {
             }
             for(int i=0;i<myList.size();i++){
                 table.addView(myList.get(i).row);
-                String sample = ((TextView)myList.get(i).row.getChildAt(2)).getText().toString();
-                if(sample.length()>type.length()){
-                    type = sample;
-                }
-                sample = ((TextView)myList.get(i).row.getChildAt(1)).getText().toString();
-                if(sample.length()>name.length()){
-                    name = sample;
-                }
+//                String sample = ((TextView)myList.get(i).row.getChildAt(2)).getText().toString();
+//                if(sample.length()>type.length()){
+//                    type = sample;
+//                }
+//                sample = ((TextView)myList.get(i).row.getChildAt(1)).getText().toString();
+//                if(sample.length()>name.length()){
+//                    name = sample;
+//                }
             }
             //print name and type
-            Log.i("name %d"+name.length(), name);
-            Log.i("type %d"+type.length(), type);
+//            Log.i("name %d"+name.length(), name);
+//            Log.i("type %d"+type.length(), type);
             threadcount = 0;
-            dialog.dismiss();
+
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
 
         }
 

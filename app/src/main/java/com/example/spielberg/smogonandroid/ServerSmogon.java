@@ -333,6 +333,7 @@ public class ServerSmogon implements Runnable {
 
                 n = jsonArray.length();
                 Log.i("ServerSmogon ", Integer.toString(n));
+                break;
 
             }
 
