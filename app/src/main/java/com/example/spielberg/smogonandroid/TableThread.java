@@ -85,25 +85,25 @@ public class TableThread implements Runnable {
             row.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
             row.setWeightSum(1f);
-            profile = new ImageView(poke_view);
-            profile.setLayoutParams(new TableRow.LayoutParams(
-                    0, TableRow.LayoutParams.WRAP_CONTENT));
-            imageparams = (TableRow.LayoutParams)profile.getLayoutParams();
-            profile.setId(View.generateViewId());
-            profile.setPadding(5,5,5,5);
-            profile.setImageResource(R.mipmap.ic_launcher);
-            imageparams.weight = 0.08f;
-            profile.setLayoutParams(imageparams);
-            profile.setAdjustViewBounds(true);
+//            profile = new ImageView(poke_view);
+//            profile.setLayoutParams(new TableRow.LayoutParams(
+//                    0, TableRow.LayoutParams.WRAP_CONTENT));
+//            imageparams = (TableRow.LayoutParams)profile.getLayoutParams();
+//            profile.setId(View.generateViewId());
+//            profile.setPadding(5,5,5,5);
+//            profile.setImageResource(R.mipmap.ic_launcher);
+//            imageparams.weight = 0.08f;
+//            profile.setLayoutParams(imageparams);
+//            profile.setAdjustViewBounds(true);
 
 //            addView(row, Integer.toString(i+1), 0.06f);
-            row.addView(profile);
+            //row.addView(profile);
 
             try{
                 //add name
                 buildString = new SpannableStringBuilder();
                 buildString.append(pokemon.getJSONObject(i).getString("name"));
-                addView(row,  buildString, 0.28f);
+                addView(row,  buildString, 0.36f);
                 buildString.clear();
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(

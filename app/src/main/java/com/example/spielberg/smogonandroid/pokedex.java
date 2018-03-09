@@ -253,8 +253,8 @@ public class pokedex extends AppCompatActivity {
         row.setWeightSum(1f);
 
 //        addView(row,getText(R.string.number), 0.06f);//add index
-        addView(row,"pic", 0.08f);//add pic column
-        addView(row,"Name", 0.28f);//add name column
+//        addView(row,"pic", 0.08f);//add pic column
+        addView(row,"Name", 0.36f);//add name column
         addView(row,getText(R.string.type), 0.28f);//add type column
         //addView(row,getText(R.string.stats));//add stats column
         addView(row, getResources().getString(R.string.stats), 0.360f);

@@ -179,7 +179,7 @@ public class SearchEngine implements Runnable {
     }
 
     public void applyName(TableRow row, int rowindex){
-        String name =((TextView) row.getChildAt(1)).getText().toString();
+        String name =((TextView) row.getChildAt(0)).getText().toString();
         if(settings.getPokemon()==""){
             settings.setView(rowindex, View.VISIBLE);
         }
@@ -195,7 +195,7 @@ public class SearchEngine implements Runnable {
      * Split name from long string
      */
     public String getString(TableRow row, int split){
-        String text = ((TextView )row.getChildAt(2)).getText().toString();
+        String text = ((TextView )row.getChildAt(1)).getText().toString();
 
         switch(split){
             //return the name
