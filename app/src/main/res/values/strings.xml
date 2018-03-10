@@ -17,7 +17,7 @@
     <string name="Success">Success! \nStrategies for this pokemon were updated!</string>
     <string name="search">Search Pokemon</string>
     <string name="stats">HP\u0020\u0020ATK\u0020DEF\u0020SPA\u0020SPD\u0020SPE</string>
-    <string name="type">Type1\u0020\u0020\u0020\u0020Type2</string>
+    <string name="type">Type1\u0020\u0020\u0020\u0020Type2\u0020\u0020\u0020\u0020</string>
     <string name="number">\u0023</string>
     <string name="update">update</string>
     <string name="backward"> \u002F </string>

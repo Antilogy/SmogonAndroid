@@ -13,126 +13,131 @@
         android:background="@color/black">
 
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="25dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/search_name"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:textColor="@color/white"
-                android:hint="@string/Name"
-                android:textColorHint="@color/white"/>
+                android:layout_margin="25dp"
+                android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:background="@color/black" />
+                <EditText
+                    android:id="@+id/search_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/Name"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white" />
 
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"/>
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black"
+                    android:spinnerMode="dialog" />
 
-            <Spinner
-                android:id="@+id/spinner3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"/>
+                <Spinner
+                    android:id="@+id/spinner2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog" />
 
-            <Switch
-                android:id="@+id/switch1"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/HP"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Spinner
+                    android:id="@+id/spinner3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog" />
 
-            <Switch
-                android:id="@+id/switch2"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Atk"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Switch
+                    android:id="@+id/switch1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/HP"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-            <Switch
-                android:id="@+id/switch3"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Def"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Switch
+                    android:id="@+id/switch2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/Atk"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-            <Switch
-                android:id="@+id/switch4"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Spa"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Switch
+                    android:id="@+id/switch3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/Def"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-            <Switch
-                android:id="@+id/switch5"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Spd"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Switch
+                    android:id="@+id/switch4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/Spa"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-            <Switch
-                android:id="@+id/switch6"
-                android:textColor="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/Spe"
-                android:paddingLeft="@dimen/padding_switch"
-                android:paddingRight="@dimen/padding_switch"
-                android:paddingTop="@dimen/padding_switch"
-                android:paddingBottom="@dimen/padding_switch"
-                android:background="@drawable/border"
-                android:textSize="18sp"/>
+                <Switch
+                    android:id="@+id/switch5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/Spd"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-            <Button
-                android:id="@+id/search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/search"
-                android:textSize="18sp"/>
-        </LinearLayout>
+                <Switch
+                    android:id="@+id/switch6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:paddingBottom="@dimen/padding_switch"
+                    android:paddingLeft="@dimen/padding_switch"
+                    android:paddingRight="@dimen/padding_switch"
+                    android:paddingTop="@dimen/padding_switch"
+                    android:text="@string/Spe"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/search"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </ScrollView>
 
 
     </RelativeLayout>
