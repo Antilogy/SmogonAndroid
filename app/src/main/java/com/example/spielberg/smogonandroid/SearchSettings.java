@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,8 +29,10 @@ public class SearchSettings {
     private int threadcount;
     private ArrayList<RowStats> results;
     private ArrayList<Integer> visibility_results;
-    private TableLayout results_table;
+    private ListView results_table;
     private SearchSettings original;
+    private ListViewAdapter adapter;
+
     //statSwitch = 0 HP
     //statSwitch = 1 Atk
     //statSwitch = 2 Def
@@ -67,6 +71,12 @@ public class SearchSettings {
     public void setResults(ArrayList<RowStats> list){
         results = list;
     }
+    public void setVisibility_results(ArrayList<Integer> indexResult){
+        visibility_results = indexResult;
+    }
+    public void setAdapter(ListViewAdapter adapter){
+        this.adapter = adapter;
+    }
 
     public String getPokemon(){
         return pokemon;
@@ -98,22 +108,23 @@ public class SearchSettings {
         results.get(index).visibility = visibility;
     }
 
-    public void applySettings(TableLayout v){
+    public void applySettings(ListView v){
         results_table = v;
 
 
         //otherwise perform a multithreaded search
         Thread thread1,thread2, thread3, thread4;
-        int children = v.getChildCount();
+        int children = results.size();
         rows = new int[children];
         handler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message message){
                 int[] result = (int[]) message.obj;
                 Thread thread4;
-                setVisibility(result, message.what);
                 threadcount++;
+
                 if(threadcount==3){
+                    setVisibility(result, 3);
                     //activate the sort thread
                     if(statSwitch<6){
                         //create sorting thread
@@ -126,6 +137,7 @@ public class SearchSettings {
                 }
                 if(message.what == 4){
                     //the sort thread is finished
+                    setVisibility(result, 4);
                     threadcount = 0;
                     return;
                 }
@@ -194,83 +206,34 @@ public class SearchSettings {
     public void setVisibility(int[] range, int id){
         if(id==4){
             //use sorted list instead
-            results_table.removeAllViews();
+            visibility_results.clear();
             for(int i=0;i<results.size();i++){
-                TableRow row = results.get(i).row;
-                row.setVisibility(results.get(i).visibility);
-                results_table.addView(row);
+                RowStats row = results.get(i);
+                if(row.visibility == View.VISIBLE){
+                    visibility_results.add(i);
+                }
             }
+            adapter.notifyDataSetChanged();
         }
-        for(int i=range[0];i<range[1];i++){
-            TableRow row = results.get(i).row;
-            row.setVisibility(results.get(i).visibility);
+        //all search threads are finished and no sorting will be done
+        else if(id==3 && statSwitch>5){
+            visibility_results.clear();
+            for(int i=0;i<results.size();i++){
+                RowStats row = results.get(i);
+                if(row.visibility == View.VISIBLE){
+                    visibility_results.add(i);
+                }
+
+            }
+            adapter.notifyDataSetChanged();
         }
+
     }
 
     public void setPokelist(JSONArray list){
         pokelist = list;
     }
-    private void applyAbility(TableRow row) {
-        String text =((TextView) row.getChildAt(0)).getText().toString();
-        int index = Integer.parseInt(text)-1;
-        JSONArray abilitylist;
-        String mytype;
-        //only apply visible if type1 is an actual type
-        try{
-            if(!(ability.compareTo("Ability")==0)){
-                abilitylist = pokelist.getJSONObject(index).getJSONArray(
-                        "alts").getJSONObject(
-                        0).getJSONArray("abilities");
-                for(int i=0;i<abilitylist.length();i++){
-                    mytype = abilitylist.getString(i);
-                    if(mytype.contains(ability)){
-                        return;
-                    }
 
-                }
-                row.setVisibility(View.GONE);
-
-
-            }
-
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-    }
-
-    private void applyType2(TableRow row) {
-        String type =((TextView) row.getChildAt(3)).getText().toString();
-        //only apply visible if type1 is an actual type
-        if(!(type2.compareTo("Type2")==0)){
-            if(!type.contains(type2)){
-                row.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void applyType1(TableRow row) {
-        String type =((TextView) row.getChildAt(3)).getText().toString();
-        //only apply visible if type1 is an actual type
-        if(!(type1.compareTo("Type1")==0)){
-            if(!type.contains(type1)){
-                row.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    public void applyName(TableRow row){
-        String name =((TextView) row.getChildAt(2)).getText().toString();
-        if(pokemon==""){
-            row.setVisibility(View.VISIBLE);
-        }
-        else if(!name.toLowerCase().contains(pokemon) && pokemon.length()>1){
-            row.setVisibility(View.GONE);
-        }
-        else if(name.toLowerCase().contains(pokemon)){
-            row.setVisibility(View.VISIBLE);
-        }
-    }
 
 
 

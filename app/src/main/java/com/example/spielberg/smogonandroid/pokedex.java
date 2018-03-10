@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -63,13 +64,15 @@ public class pokedex extends AppCompatActivity {
     Switch switcher[];
     JSONArray types, abilities, pokemon;
     List<String> typeList, abilityList, type2List;
-    TableLayout table;
+    ListView table;
     int statOrder;//current order of rows by stat
     ArrayList<RowStats> myList;
     ArrayList<RowStats>[] result_list;
+    ArrayList<Integer> indexResult;
     Handler handler;//used to save results of thread rows
     int threadcount;//number of tablethreads that are finished
     ProgressDialog dialog;
+    ListViewAdapter listAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +80,8 @@ public class pokedex extends AppCompatActivity {
         typeList = new ArrayList<>();
         type2List = new ArrayList<>();
         abilityList = new ArrayList<>();
+        indexResult = new ArrayList<>();
+        settings.setVisibility_results(indexResult);
         switcher = new Switch[6];
         typeList.add("Type1");
         type2List.add("Type2");
@@ -207,25 +212,18 @@ public class pokedex extends AppCompatActivity {
 //        String type = new String();
 //        String name = new String();
         if(threadcount == 2){
-            table.removeAllViews();
+//            table.removeAllViews();
             for(int i=0; i<result_list.length;i++){
                 myList.addAll(result_list[i]);
                 //refresh tablelayout
             }
             for(int i=0;i<myList.size();i++){
-                table.addView(myList.get(i).row);
-//                String sample = ((TextView)myList.get(i).row.getChildAt(2)).getText().toString();
-//                if(sample.length()>type.length()){
-//                    type = sample;
-//                }
-//                sample = ((TextView)myList.get(i).row.getChildAt(1)).getText().toString();
-//                if(sample.length()>name.length()){
-//                    name = sample;
-//                }
+                indexResult.add(i);
             }
-            //print name and type
-//            Log.i("name %d"+name.length(), name);
-//            Log.i("type %d"+type.length(), type);
+            listAdapter = new ListViewAdapter(this, myList, width,
+                    indexResult, generation);
+            table.setAdapter(listAdapter);
+            settings.setAdapter(listAdapter);
             threadcount = 0;
 
             if(dialog.isShowing()){
@@ -238,9 +236,9 @@ public class pokedex extends AppCompatActivity {
     }
 
     private void addpokemon(JSONArray pokemon) {
-        table = (TableLayout) findViewById(R.id.pokemon_results);
+        table = (ListView) findViewById(R.id.list_pokemon_results);
         TableLayout header_table = (TableLayout) findViewById(R.id.pokemon_header_row);
-        table.removeAllViews();
+//        table.removeAllViews();
         header_table.removeAllViews();
         SpannableStringBuilder build= new SpannableStringBuilder();
         TableRow row;
@@ -252,17 +250,9 @@ public class pokedex extends AppCompatActivity {
                 TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
         row.setWeightSum(1f);
 
-//        addView(row,getText(R.string.number), 0.06f);//add index
-//        addView(row,"pic", 0.08f);//add pic column
         addView(row,"Name", 0.36f);//add name column
         addView(row,getText(R.string.type), 0.28f);//add type column
-        //addView(row,getText(R.string.stats));//add stats column
         addView(row, getResources().getString(R.string.stats), 0.360f);
-//        addView(row, "ATK",0.060f);
-//        addView(row, "DEF",0.060f);
-//        addView(row, "SPA",0.060f);
-//        addView(row, "SPD",0.060f);
-//        addView(row, "SPE",0.060f);
 
         row.setPadding(5,5,5,5);
         row.setGravity(Gravity.CENTER_HORIZONTAL);

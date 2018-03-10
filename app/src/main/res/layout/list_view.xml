@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/pokemon_nameid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.36"
+        android:textColor="@color/white"
+        android:gravity="center_vertical"
+        android:typeface="monospace"
+        android:minHeight="40sp"
+        android:text="@string/sample" />
+
+    <TextView
+        android:id="@+id/pokemon_type_stats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.64"
+        android:textColor="@color/white"
+        android:gravity="center_vertical"
+        android:typeface="monospace"
+        android:text="@string/sample" />
+</LinearLayout>

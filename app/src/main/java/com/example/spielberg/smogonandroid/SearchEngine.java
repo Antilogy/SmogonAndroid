@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,12 +22,12 @@ import java.util.ArrayList;
 
 public class SearchEngine implements Runnable {
     private Handler mHandler;
-    private TableLayout table;
+    private ListView table;
     private int start, end, threadID;
     private SearchSettings settings;
     private int index[];
 
-    public SearchEngine(Handler hand, TableLayout table,
+    public SearchEngine(Handler hand, ListView table,
                         int start, int end, SearchSettings settings, int id){
         mHandler = hand;
         this.table = table;
@@ -115,7 +117,7 @@ public class SearchEngine implements Runnable {
         }
         //otherwise perform regular search
         for(int i=start;i<end;i++){
-            TableRow row = v.get(i).row;
+            RowStats row = v.get(i);
             applyName(row, i);
             applyType1(row, i);
             applyType2(row, i);
@@ -126,9 +128,9 @@ public class SearchEngine implements Runnable {
     }
 
 
-    private void applyAbility(TableRow row, int rowindex) {
+    private void applyAbility(RowStats row, int rowindex) {
         //String text =((TextView) row.getChildAt(0)).getText().toString();
-        int index = row.getId();
+        int index = row.index;
         JSONArray abilitylist;
         String mytype;
         //only apply visible if type1 is an actual type
@@ -156,7 +158,7 @@ public class SearchEngine implements Runnable {
 
     }
 
-    private void applyType2(TableRow row, int rowindex) {
+    private void applyType2(RowStats row, int rowindex) {
         String type = getString(row, 1);
         //first split string
 
@@ -168,39 +170,39 @@ public class SearchEngine implements Runnable {
         }
     }
 
-    private void applyType1(TableRow row, int rowindex) {
+    private void applyType1(RowStats row, int rowindex) {
         String type = getString(row, 1);
         //only apply visible if type1 is an actual type
         if(!(settings.getType1().compareTo("Type1")==0)){
             if(!type.contains(settings.getType1())){
-                settings.setView(rowindex, View.GONE);
+                row.visibility = View.GONE;
             }
         }
     }
 
-    public void applyName(TableRow row, int rowindex){
-        String name =((TextView) row.getChildAt(0)).getText().toString();
+    public void applyName(RowStats row, int rowindex){
+        String name = row.name.toString();
         if(settings.getPokemon()==""){
-            settings.setView(rowindex, View.VISIBLE);
+            row.visibility = View.VISIBLE;
         }
         else if(!name.toLowerCase().contains(settings.getPokemon())){
-            settings.setView(rowindex, View.GONE);
+            row.visibility = View.GONE;
         }
         else if(name.toLowerCase().contains(settings.getPokemon())){
-            settings.setView(rowindex, View.VISIBLE);
+            row.visibility = View.VISIBLE;
         }
     }
 
     /**
      * Split name from long string
      */
-    public String getString(TableRow row, int split){
-        String text = ((TextView )row.getChildAt(1)).getText().toString();
+    public String getString(RowStats row, int split){
+        String text = row.typeandStats.toString();
 
         switch(split){
             //return the name
             case 0:
-                text = text.substring(0, 17);
+                text = row.name.toString();
 
                 break;
             //return the type

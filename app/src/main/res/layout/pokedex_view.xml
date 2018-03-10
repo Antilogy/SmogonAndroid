@@ -24,42 +24,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </TableLayout>
+
+        <ListView
+            android:id="@+id/list_pokemon_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"/>
         <!--</ScrollView>-->
         <!--android:stretchColumns="2,3,4"-->
-        <ScrollView
-            android:id="@+id/scrollPokemon"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <TableLayout
-            android:id="@+id/pokemon_results"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <!--<ScrollView-->
+            <!--android:id="@+id/scrollPokemon"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+        <!--<TableLayout-->
+            <!--android:id="@+id/pokemon_results"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/header_row">
+            <!--<TableRow-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/header_row">-->
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
+                <!--<TextView-->
+                    <!--android:id="@+id/textView4"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="TextView" />-->
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
+                <!--<TextView-->
+                    <!--android:id="@+id/textView3"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="TextView" />-->
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
-            </TableRow>
+                <!--<TextView-->
+                    <!--android:id="@+id/textView2"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="TextView" />-->
+            <!--</TableRow>-->
 
-        </TableLayout>
-        </ScrollView>
+        <!--</TableLayout>-->
+        <!--</ScrollView>-->
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

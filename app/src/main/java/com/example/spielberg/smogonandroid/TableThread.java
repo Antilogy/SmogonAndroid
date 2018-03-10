@@ -12,8 +12,10 @@ import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -69,42 +71,28 @@ public class TableThread implements Runnable {
 
     private void makeTableRows() {
         //add pokemon entries
-        TableRow row;
+        LinearLayout row;
         ImageView profile;
         String typeString, statString;
-        SpannableStringBuilder buildString;
+        SpannableStringBuilder buildString = new SpannableStringBuilder();
+        SpannableStringBuilder name = new SpannableStringBuilder();
         int[] pokestat = new int[6];
         JSONObject stats;
         JSONArray types;
         RowStats rowstat;
-        TableRow.LayoutParams imageparams;
+        LayoutInflater inflater = (LayoutInflater) poke_view.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
         for(int i=range[0];i<range[1];i++){
-            row = new TableRow(poke_view);
-            row.setId(i);
-            row.setBackgroundColor(Color.BLACK);
-            row.setLayoutParams(new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.WRAP_CONTENT));
-            row.setWeightSum(1f);
-//            profile = new ImageView(poke_view);
-//            profile.setLayoutParams(new TableRow.LayoutParams(
-//                    0, TableRow.LayoutParams.WRAP_CONTENT));
-//            imageparams = (TableRow.LayoutParams)profile.getLayoutParams();
-//            profile.setId(View.generateViewId());
-//            profile.setPadding(5,5,5,5);
-//            profile.setImageResource(R.mipmap.ic_launcher);
-//            imageparams.weight = 0.08f;
-//            profile.setLayoutParams(imageparams);
-//            profile.setAdjustViewBounds(true);
 
-//            addView(row, Integer.toString(i+1), 0.06f);
-            //row.addView(profile);
 
             try{
-                //add name
+                name = new SpannableStringBuilder();
                 buildString = new SpannableStringBuilder();
-                buildString.append(pokemon.getJSONObject(i).getString("name"));
-                addView(row,  buildString, 0.36f);
-                buildString.clear();
+
+                //add name
+                name.append(String.format(Locale.US,"%-24s",
+                        pokemon.getJSONObject(i).getString("name")));
+
                 //add type1/type2
                 types = pokemon.getJSONObject(i).getJSONArray("alts").getJSONObject(
                         0).getJSONArray("types");
@@ -136,70 +124,20 @@ public class TableThread implements Runnable {
 
 
                 help.ColorCodeType(buildString);
-                addView(row, buildString, 0.64f);
 
 
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            row.setPadding(5,5,5,5);
 
             //setup for onclick view
-            row.setOnClickListener(new View.OnClickListener(){
-                //TableRow is calling onClick()
-                public void onClick(View v){
-                    TableRow littlerow = (TableRow) v;
-                    //TextView number = (TextView) littlerow.getChildAt(0);
-                    //Get original index for pokedex
-                    int index;
-                    index = littlerow.getId();
-                    Intent intent = new Intent(poke_view, pokearticle.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("index", index);
-                    bundle.putString("gen", gen);
-//                    Log.i("tablerow",number.getText().toString()+
-//                            text.getText().toString());
-                    intent.putExtras(bundle);
-                    poke_view.startActivity(intent);
-                }
-            });
+
 
             //add rowstat to arraylist
-            rowstat = new RowStats(row, pokestat);
+            rowstat = new RowStats(name, buildString, pokestat, i);
             result_rows.add(rowstat);
 
 
         }
-    }
-
-    /**
-     * generic addview function for tablerow.
-     * Adds a textview with name to a tablerow.
-     */
-    private void addView(TableRow row, SpannableStringBuilder name, float weight){
-        TextView tx;
-        //add pic column
-        tx = new TextView(poke_view);
-        tx.setLayoutParams(new TableRow.LayoutParams(
-                0, TableRow.LayoutParams.WRAP_CONTENT));
-
-        TableRow.LayoutParams params = (TableRow.LayoutParams)tx.getLayoutParams();
-        params.gravity = Gravity.CENTER_VERTICAL;
-        params.weight = weight;
-
-        tx.setLayoutParams(params);
-        tx.setText(name);
-        //set textsize depending on screen resolution 720, 1080, 1440
-
-
-        tx.setTextSize(poke_view.getResources().getDimension(poke_view.width));
-        tx.setTypeface(Typeface.MONOSPACE);
-
-        //tx.setId(View.generateViewId());
-
-        tx.setTextColor(Color.WHITE);
-        tx.setPadding(5,5,5,5);
-
-        row.addView(tx);
     }
 }
