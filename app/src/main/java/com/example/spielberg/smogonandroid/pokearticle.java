@@ -1,6 +1,7 @@
 package com.example.spielberg.smogonandroid;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ public class pokearticle extends AppCompatActivity {
     private int index;
     private Boolean test=false;
     Handler handler;
+    ProgressDialog dialog;
 
 
     @Override
@@ -74,7 +76,13 @@ public class pokearticle extends AppCompatActivity {
             tab1 = (TabActivity1) fraglist.get(0);
             tab2 = (TabActivity2) fraglist.get(1);
             FragmentManager fm = getSupportFragmentManager();
-            tab3 = (TabActivity3) fraglist.get(2);
+            if(fraglist.size() == 3){
+                tab3 = (TabActivity3) fraglist.get(2);
+            }
+//            else{
+//                setupTab3();
+//            }
+
         }
         handler = new Handler(Looper.getMainLooper()){
             @Override
@@ -99,17 +107,21 @@ public class pokearticle extends AppCompatActivity {
                         setupPopWindow(message.what);
                         break;
 
+                    case 3:
+                        //articles were downloaded
+                        if(dialog.isShowing()){
+                            dialog.dismiss();
+                        }
+                        setupArticleandStats();
+                        refreshlayoutpart2();
+                        break;
+
                     default:
                         break;
                 }
             }
         };
         callSmogon();
-
-
-
-
-
 
 
 
@@ -142,7 +154,6 @@ public class pokearticle extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         tablayout2 = (TabLayout) findViewById(R.id.format);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -150,9 +161,31 @@ public class pokearticle extends AppCompatActivity {
         setupFormat(tablayout2);
         //update the overview and article tabs; tab2 and tab3 respectively
         updateTabs();
-        //end of updating tabs
 
 
+
+
+
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        if( dialog != null){
+            dialog.dismiss();
+        }
+    }
+
+    public void refreshlayoutpart2(){
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        tablayout2 = (TabLayout) findViewById(R.id.format);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+//        tabLayout.removeAllTabs();
+        tabLayout.setupWithViewPager(viewPager);
+
+
+        //add a tab for all formats the pokemon is in
+        setupFormat(tablayout2);
 
     }
 
@@ -179,7 +212,10 @@ public class pokearticle extends AppCompatActivity {
 
             move = strtgy_art.getJSONObject(tab.getPosition()
             ).getJSONArray("movesets");
-            tab3.newMoveset(move.toString(), format);
+            if(tab3 != null){
+                tab3.newMoveset(move.toString(), format);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -211,16 +247,7 @@ public class pokearticle extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        tablayout2 = (TabLayout) findViewById(R.id.format);
-        setupViewPager(viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-//        tabLayout.removeAllTabs();
-        tabLayout.setupWithViewPager(viewPager);
 
-
-        //add a tab for all formats the pokemon is in
-        setupFormat(tablayout2);
 
 
 
@@ -333,16 +360,16 @@ public class pokearticle extends AppCompatActivity {
             setupTab2();
             setupTab3();
 
-            adapter.addFragment(tab1, "Stats");
-            adapter.addFragment(tab2, "Overview");
-            adapter.addFragment(tab3, "Articles");
         }
-        else{
+        else if(tab3==null){
+            setupTab3();
+        }
 
-            adapter.addFragment(tab1, "Stats");
-            adapter.addFragment(tab2, "Overview");
-            adapter.addFragment(tab3, "Articles");
-        }
+
+        adapter.addFragment(tab1, "Stats");
+        adapter.addFragment(tab2, "Overview");
+        adapter.addFragment(tab3, "Articles");
+
 
         viewpager.setAdapter(adapter);
     }
@@ -468,6 +495,7 @@ public class pokearticle extends AppCompatActivity {
         //check if directory is made
         if(folder.exists() && folder.isDirectory() && f.exists()){
             setupArticleandStats();
+            refreshlayoutpart2();
             return;
         }
         //if not make it
@@ -481,17 +509,22 @@ public class pokearticle extends AppCompatActivity {
 
 
         //download strategy articles
-        sm = new ServerSmogon(getBaseContext(), gen, "strategy", pokemon);
+        sm = new ServerSmogon(getBaseContext(), gen, "strategy", pokemon, handler);
         thread = new Thread(sm);
 
         thread.start();
-        try{
+        dialog=new ProgressDialog(this);
+        dialog.setMessage("Downloading "+pokemon);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
+//        try{
+//
+//            thread.join();
+//        }catch (InterruptedException e){
+//            e.printStackTrace();
+//        }
 
-            thread.join();
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
-        setupArticleandStats();
     }
     public String toLowerCase(String string){
         String proto = string.toLowerCase();

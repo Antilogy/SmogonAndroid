@@ -294,6 +294,7 @@ public class ServerSmogon implements Runnable {
     public void downloadArticles(){
         JSONArray jsonArray;
         int n;
+        Message completeMessage;
 
 
 
@@ -332,6 +333,8 @@ public class ServerSmogon implements Runnable {
                 }
 
                 n = jsonArray.length();
+                completeMessage = mHandler.obtainMessage(3, "Update Success!");
+                completeMessage.sendToTarget();
                 Log.i("ServerSmogon ", Integer.toString(n));
                 break;
 
